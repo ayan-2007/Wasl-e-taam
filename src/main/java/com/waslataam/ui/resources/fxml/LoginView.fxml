@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.LoginController"
+      alignment="CENTER" spacing="20" styleClass="root" prefWidth="400" prefHeight="500">
+    <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
+    
+    <VBox alignment="CENTER" spacing="8">
+        <Label text="وصلِ طعام" styleClass="logo-label" style="-fx-font-size: 36px; -fx-text-fill: #2d7a3a;"/>
+        <Label text="Wasl-e-Ta'am" styleClass="subheader-label"/>
+        <Label text="Smart Food Surplus Redistribution Platform" style="-fx-font-size: 13px; -fx-text-fill: #6a7a6e;"/>
+    </VBox>
+    
+    <Separator/>
+    
+    <VBox spacing="16" alignment="CENTER" maxWidth="320">
+        <Label text="Sign In" styleClass="header-label"/>
+        
+        <VBox spacing="12">
+            <Label text="Role" style="-fx-font-weight: 500;"/>
+            <ComboBox fx:id="roleComboBox" prefWidth="320" promptText="Select your role"/>
+        </VBox>
+        
+        <VBox spacing="12">
+            <Label text="Name" style="-fx-font-weight: 500;"/>
+            <TextField fx:id="nameField" prefWidth="320" promptText="Enter your name"/>
+        </VBox>
+        
+        <VBox spacing="12">
+            <Label text="Email" style="-fx-font-weight: 500;"/>
+            <TextField fx:id="emailField" prefWidth="320" promptText="Enter your email"/>
+        </VBox>
+        
+        <Button fx:id="loginButton" text="Sign In" prefWidth="320" defaultButton="true" onAction="#handleLogin"/>
+    </VBox>
+    
+    <Label fx:id="errorLabel" text="" style="-fx-text-fill: #c0392b; -fx-font-size: 12px;" visible="false" wrapText="true"/>
+</VBox>

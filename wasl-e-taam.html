@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FoodBridge — Project Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink:        #0d1a0d;
+    --paper:      #f4f7f2;
+    --accent:     #2d7a3a;
+    --accent2:    #1b5eb5;
+    --gold:       #c9962a;
+    --muted:      #5c6b5c;
+    --rule:       #ccd5cc;
+    --code-bg:    #101a10;
+    --code-text:  #d8e8d3;
+    --red:        #b52020;
+    --card:       #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.7; }
+
+  nav { position: sticky; top: 0; z-index: 100; background: var(--ink); display: flex; align-items: center; justify-content: space-between; padding: 0 2.5rem; height: 52px; border-bottom: 2px solid var(--accent); }
+  nav .logo { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--paper); letter-spacing: .04em; }
+  nav .logo span { color: var(--gold); }
+  nav ul { list-style: none; display: flex; gap: 1.6rem; }
+  nav ul a { color: #9ab09a; text-decoration: none; font-size: .78rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; transition: color .2s; }
+  nav ul a:hover { color: var(--gold); }
+
+  .hero { background: var(--ink); padding: 5rem 2.5rem 4rem; text-align: center; border-bottom: 1px solid #1e2e1e; }
+  .hero .brand { font-size: 3.8rem; font-family: 'Playfair Display', serif; color: var(--gold); letter-spacing: .06em; line-height: 1.1; }
+  .hero .subtitle { display: block; font-size: 1.1rem; color: #6a8a6a; letter-spacing: .12em; margin-top: .4rem; font-weight: 300; }
+  .hero .tagline { margin-top: 1.4rem; font-size: 1.05rem; color: #8a9e8a; max-width: 650px; margin-inline: auto; font-weight: 300; line-height: 1.8; }
+  .hero .badges { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; }
+  .badge { font-size: .7rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: .3rem .9rem; border-radius: 2px; border: 1px solid; }
+  .badge.green { color: #5ec98a; border-color: #5ec98a; }
+  .badge.blue  { color: #6e99e8; border-color: #6e99e8; }
+  .badge.gold  { color: var(--gold); border-color: var(--gold); }
+  .badge.red   { color: #e87a7a; border-color: #e87a7a; }
+
+  .container { max-width: 1060px; margin: 0 auto; padding: 0 2.5rem; }
+  section { padding: 4.5rem 0; border-bottom: 1px solid var(--rule); }
+  section:last-child { border-bottom: none; }
+  .section-eyebrow { font-size: .7rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); margin-bottom: .6rem; }
+  h2 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; line-height: 1.2; color: var(--ink); margin-bottom: 1.6rem; }
+  h3 { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: .6rem; margin-top: 1.6rem; }
+  p { color: #2e3a2e; margin-bottom: 1rem; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.2rem; margin-top: 1.4rem; }
+  .card { background: var(--card); border: 1px solid var(--rule); border-radius: 4px; padding: 1.4rem 1.6rem; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .card.green::before  { background: var(--accent); }
+  .card.blue::before   { background: var(--accent2); }
+  .card.gold::before   { background: var(--gold); }
+  .card.red::before    { background: var(--red); }
+  .card.purple::before { background: #7c3aed; }
+  .card.teal::before   { background: #0e9090; }
+  .card .card-label { font-size: .68rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+  .card h4 { font-size: .95rem; font-weight: 600; margin-bottom: .5rem; }
+  .card p  { font-size: .85rem; color: var(--muted); margin: 0; line-height: 1.6; }
+
+  .pattern-block { background: var(--card); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 0 4px 4px 0; padding: 1.4rem 1.6rem; margin-bottom: 1.4rem; }
+  .pattern-block.blue   { border-left-color: var(--accent2); }
+  .pattern-block.gold   { border-left-color: var(--gold); }
+  .pattern-block.red    { border-left-color: var(--red); }
+  .pattern-block.purple { border-left-color: #7c3aed; }
+  .pattern-block.teal   { border-left-color: #0e9090; }
+  .pattern-block h4 { font-size: .95rem; font-weight: 600; margin-bottom: .3rem; }
+  .pattern-block .pattern-meta { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+  .pattern-block p { font-size: .87rem; margin: 0; color: #2e3a2e; }
+
+  .arch-diagram { background: var(--code-bg); border-radius: 4px; padding: 2rem; overflow-x: auto; margin: 1.4rem 0; }
+  .arch-diagram pre { font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: #9ab89a; line-height: 1.7; white-space: pre; }
+  .arch-diagram .hl  { color: var(--gold); font-weight: 600; }
+  .arch-diagram .hl2 { color: #82aaff; }
+  .arch-diagram .hl3 { color: #c3e88d; }
+  .arch-diagram .hl4 { color: #f78c6c; }
+  .arch-diagram .hl5 { color: #c792ea; }
+  .arch-diagram .dim { color: #3a5a3a; }
+
+  .pkg-tree { background: var(--code-bg); border-radius: 4px; padding: 1.6rem 2rem; overflow-x: auto; margin: 1.2rem 0; }
+  .pkg-tree pre { font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: #9ab89a; line-height: 1.75; }
+  .pkg-tree .dir  { color: var(--gold); }
+  .pkg-tree .file { color: #c3e88d; }
+  .pkg-tree .note { color: #3a6040; }
+
+  .uc-table { width: 100%; border-collapse: collapse; font-size: .84rem; margin-top: 1.2rem; }
+  .uc-table th { background: var(--accent); color: white; text-align: left; padding: .65rem 1rem; font-weight: 500; }
+  .uc-table td { padding: .7rem 1rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .uc-table tr:nth-child(even) td { background: #f0f5f0; }
+  .uc-id { font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--accent); font-weight: 600; white-space: nowrap; }
+
+  .plo-table { width: 100%; border-collapse: collapse; margin-top: 1.4rem; font-size: .85rem; }
+  .plo-table th { background: var(--ink); color: var(--paper); text-align: left; padding: .7rem 1rem; font-weight: 500; letter-spacing: .05em; }
+  .plo-table td { padding: .75rem 1rem; border-bottom: 1px solid var(--rule); vertical-align: top; color: #2e3a2e; }
+  .plo-table tr:nth-child(even) td { background: #f0f5f0; }
+  .plo-table .plo-num { font-family: 'JetBrains Mono', monospace; font-size: .78rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
+  .plo-table .plo-status { text-align: center; font-size: 1rem; }
+
+  .milestones { display: flex; flex-direction: column; gap: 0; margin-top: 1.4rem; position: relative; }
+  .milestones::before { content: ''; position: absolute; left: 1.15rem; top: 0; bottom: 0; width: 2px; background: var(--rule); }
+  .milestone { display: flex; gap: 1.4rem; padding-bottom: 2rem; position: relative; }
+  .milestone:last-child { padding-bottom: 0; }
+  .milestone-dot { width: 2.3rem; height: 2.3rem; border-radius: 50%; background: var(--ink); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; color: var(--gold); font-family: 'JetBrains Mono', monospace; flex-shrink: 0; position: relative; z-index: 1; }
+  .milestone-body h4 { font-size: .93rem; font-weight: 600; margin-bottom: .25rem; }
+  .milestone-body p  { font-size: .84rem; color: var(--muted); margin: 0; }
+
+  .ethics-box { background: #f0faf0; border: 1px solid #b0d5b0; border-left: 4px solid var(--accent); border-radius: 0 4px 4px 0; padding: 1.4rem 1.6rem; margin-top: 1.4rem; }
+  .ethics-box h4 { font-size: .9rem; font-weight: 600; color: #1a5a1a; margin-bottom: .5rem; }
+  .ethics-box p  { font-size: .86rem; color: #2a4a2a; margin: 0; line-height: 1.65; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+  .tag { font-size: .7rem; font-weight: 600; letter-spacing: .06em; padding: .2rem .65rem; border-radius: 20px; background: #e4ede4; color: var(--muted); }
+  .tag.green  { background: #d8f0dc; color: var(--accent); }
+  .tag.blue   { background: #d8e8fd; color: var(--accent2); }
+  .tag.gold   { background: #fdf4e0; color: #8a6200; }
+  .tag.purple { background: #f0e8ff; color: #7c3aed; }
+  .tag.red    { background: #fde8e8; color: var(--red); }
+  .tag.teal   { background: #e0f5f5; color: #0e6060; }
+
+  .stat-row { display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1.6rem 0; }
+  .stat-box { flex: 1; min-width: 150px; background: var(--ink); border-radius: 4px; padding: 1.2rem 1.4rem; text-align: center; }
+  .stat-box .stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold); font-weight: 700; }
+  .stat-box .stat-label { font-size: .75rem; color: #7a9a7a; letter-spacing: .08em; text-transform: uppercase; margin-top: .2rem; }
+
+  footer { background: var(--ink); color: #5c6b5c; text-align: center; padding: 2rem; font-size: .78rem; letter-spacing: .06em; }
+  footer span { color: var(--gold); }
+
+  @media (max-width: 700px) {
+    nav ul { display: none; }
+    .hero .brand { font-size: 2.4rem; }
+    h2 { font-size: 1.5rem; }
+    .card-grid { grid-template-columns: 1fr; }
+    .container { padding: 0 1.2rem; }
+    section { padding: 3rem 0; }
+  }
+  @media print {
+    nav { display: none; }
+    body { font-size: 12px; }
+    .arch-diagram, .pkg-tree { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Food<span>Bridge</span></div>
+  <ul>
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#patterns">Patterns</a></li>
+    <li><a href="#usecases">Use Cases</a></li>
+    <li><a href="#uml">UML</a></li>
+    <li><a href="#plos">PLOs</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#ethics">Ethics</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="brand">FoodBridge
+    <span class="subtitle">Smart Food Surplus Redistribution Platform</span>
+  </div>
+  <p class="tagline">
+    A Java-based platform that connects food donors (restaurants, hotels, grocery stores)
+    with recipient organizations (NGOs, shelters, food banks) in real time —
+    reducing food waste, fighting hunger, and demonstrating every major software design
+    pattern through a system that genuinely matters to society.
+  </p>
+  <div class="badges">
+    <span class="badge green">Software Design &amp; Analysis · CS-3004</span>
+    <span class="badge blue">Java · OOP · Design Patterns</span>
+    <span class="badge gold">6 Core Patterns</span>
+    <span class="badge red">Real-World Impact</span>
+    <span class="badge green">All 10 PLOs Covered</span>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <div class="section-eyebrow">The Real-World Problem</div>
+    <h2>1/3 of All Food Produced is Wasted. People Go Hungry Every Day.</h2>
+    <p>
+      According to the UN Food and Agriculture Organization, approximately <strong>1.3 billion tonnes</strong>
+      of food is lost or wasted every year globally — enough to feed the world's hungry population
+      three times over. In Pakistan alone, an estimated <strong>40% of perishable food</strong> is wasted at
+      the retail and consumer level, while millions face food insecurity daily.
+    </p>
+    <p>
+      The core problem is not a shortage of food — it is a <strong>coordination failure</strong>.
+      Restaurants prepare surplus food daily but have no efficient channel to connect with
+      nearby shelters. NGOs spend hours manually calling donors. Volunteers have no
+      centralized task pool. This is a <em>software problem with a software solution</em>.
+    </p>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-num">1.3B</div><div class="stat-label">Tonnes Wasted Yearly</div></div>
+      <div class="stat-box"><div class="stat-num">828M</div><div class="stat-label">People Face Hunger</div></div>
+      <div class="stat-box"><div class="stat-num">40%</div><div class="stat-label">Food Lost in Pakistan</div></div>
+      <div class="stat-box"><div class="stat-num">$1T</div><div class="stat-label">Annual Economic Loss</div></div>
+    </div>
+    <h3>What FoodBridge Does</h3>
+    <p>
+      FoodBridge is a <strong>console-based Java application</strong> (expandable to GUI/web) that acts as
+      a coordination hub between four actor types: Donors, Recipients, Volunteers, and Admins.
+      When a donor posts surplus food, the system automatically notifies eligible recipients,
+      applies a smart matching strategy, tracks the donation through its full lifecycle via a
+      state machine, records every action in an audit trail, and updates a live impact dashboard.
+      Every component is driven by a canonical design pattern — no pattern is decorative.
+    </p>
+    <div class="card-grid">
+      <div class="card green"><div class="card-label">Core Purpose</div><h4>Real-Time Donor–Recipient Matching</h4><p>Donors post food. Recipients claim it instantly. Volunteers collect and deliver — all tracked end-to-end.</p></div>
+      <div class="card blue"><div class="card-label">Technical Showcase</div><h4>6 Design Patterns in Context</h4><p>Observer, Strategy, Factory, State, Command, and Chain of Responsibility — each solving a distinct, real architectural problem.</p></div>
+      <div class="card gold"><div class="card-label">Unique Feature</div><h4>Expiry-Aware Smart Matching</h4><p>The system prioritizes donations nearing expiry and routes them urgently — preventing waste before it happens.</p></div>
+      <div class="card red"><div class="card-label">Social Impact</div><h4>Measurable Waste Reduction</h4><p>The system tracks kg of food saved, CO₂ avoided, and meals served — every transaction becomes a reportable social metric.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="container">
+    <div class="section-eyebrow">Project Overview</div>
+    <h2>System Actors &amp; Key Features</h2>
+    <p>FoodBridge has four primary actors. Each actor interacts with a distinct set of use cases and represents a real-world stakeholder in the food redistribution ecosystem.</p>
+    <div class="card-grid">
+      <div class="card green"><div class="card-label">Actor 1</div><h4>🍽️ Donor</h4><p>Restaurants, hotels, grocery stores, catering companies, or individuals who post surplus food listings with quantity, type, and expiry.</p></div>
+      <div class="card blue"><div class="card-label">Actor 2</div><h4>🏠 Recipient</h4><p>NGOs, food banks, orphanages, shelters — organizations that claim donations and distribute them to beneficiaries.</p></div>
+      <div class="card gold"><div class="card-label">Actor 3</div><h4>🚗 Volunteer</h4><p>Logistics volunteer who picks up food from the donor location and delivers it to the recipient's address.</p></div>
+      <div class="card red"><div class="card-label">Actor 4</div><h4>🛡️ Admin</h4><p>Platform administrator who manages users, resolves disputes, switches matching strategy at runtime, and generates audit reports.</p></div>
+    </div>
+    <h3>Key Differentiating Features</h3>
+    <div class="card-grid">
+      <div class="card green"><div class="card-label">Feature 1</div><h4>Expiry-Aware Priority Escalation</h4><p>Donations within 2 hours of expiry are auto-flagged URGENT and jump the matching queue — preventing food from being thrown away.</p></div>
+      <div class="card blue"><div class="card-label">Feature 2</div><h4>Full Undo-able Audit Trail</h4><p>Every claim, cancel, and delivery is a Command object — supporting legal-grade audit reporting and one-click undo of any action.</p></div>
+      <div class="card gold"><div class="card-label">Feature 3</div><h4>Live Impact Dashboard</h4><p>kg saved, meals served, CO₂ offset, top donors, top recipients — auto-updated in real time via Observer pattern.</p></div>
+      <div class="card purple"><div class="card-label">Feature 4</div><h4>Pluggable Matching Algorithms</h4><p>Admin switches between Nearest-First, Expiry-First, or Capacity-Based matching at runtime — zero code changes required.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="container">
+    <div class="section-eyebrow">System Architecture</div>
+    <h2>5-Layer Architecture Blueprint</h2>
+    <p>FoodBridge follows a strict layered architecture. Each layer has a single responsibility and depends only on layers below it — enforcing the Dependency Inversion Principle throughout.</p>
+
+    <div class="arch-diagram">
+<pre>
+┌─────────────────────────────────────────────────────────────────────┐
+│                        <span class="hl">PRESENTATION LAYER</span>                           │
+│         ConsoleUI · DashboardView · NotificationPrinter             │
+│         AuditReportView · DonationListView                          │
+│         [Observer consumers — reacts to all system events]          │
+├─────────────────────────────────────────────────────────────────────┤
+│                        <span class="hl2">COORDINATION LAYER</span>                           │
+│         DonationCoordinator · MatchingEngine · VolunteerDispatcher  │
+│         [Observer fires here · MatchingStrategy invoked here]       │
+├─────────────────────────────────────────────────────────────────────┤
+│                        <span class="hl3">WORKFLOW LAYER</span>                               │
+│         DonationStateMachine · CommandInvoker · AuditTrail          │
+│         VerificationChain (Chain of Responsibility)                 │
+│         [State · Command · Chain patterns all live here]            │
+├─────────────────────────────────────────────────────────────────────┤
+│                        <span class="hl4">DOMAIN MODEL LAYER</span>                           │
+│         Donation (abstract) · PerishableDonation · DryFoodDonation  │
+│         PreparedMealDonation · User · Donor · Recipient             │
+│         Volunteer · Admin · DonationFactory · UserFactory           │
+│         [Factory pattern creates all domain objects here]           │
+├─────────────────────────────────────────────────────────────────────┤
+│                        <span class="dim">REPOSITORY LAYER</span>                             │
+│         DonationRepository (interface) · UserRepository (interface) │
+│         InMemoryDonationRepo · InMemoryUserRepo                     │
+│         [All persistence abstracted behind interfaces]              │
+└─────────────────────────────────────────────────────────────────────┘
+              ↑ Data flows upward · Dependencies point downward ↑
+</pre>
+    </div>
+
+    <h3>Java Package Structure</h3>
+    <div class="pkg-tree">
+<pre>
+<span class="dir">foodbridge/</span>
+├── <span class="dir">domain/</span>
+│   ├── <span class="file">Donation.java</span>              <span class="note">// Abstract class — base for all donation types</span>
+│   ├── <span class="file">PerishableDonation.java</span>    <span class="note">// extends Donation — has expiryTime, tempRequirement</span>
+│   ├── <span class="file">DryFoodDonation.java</span>       <span class="note">// extends Donation — shelf-stable, longer window</span>
+│   ├── <span class="file">PreparedMealDonation.java</span>  <span class="note">// extends Donation — cooked food, strictest expiry</span>
+│   ├── <span class="file">DonationStatus.java</span>        <span class="note">// Enum: PENDING_REVIEW, AVAILABLE, CLAIMED, IN_TRANSIT, DELIVERED, EXPIRED, CANCELLED</span>
+│   ├── <span class="file">User.java</span>                  <span class="note">// Abstract base user class</span>
+│   ├── <span class="file">Donor.java</span>                 <span class="note">// extends User — posts donations</span>
+│   ├── <span class="file">Recipient.java</span>             <span class="note">// extends User — claims donations, has capacity field</span>
+│   ├── <span class="file">Volunteer.java</span>             <span class="note">// extends User — assigned pickup/delivery tasks</span>
+│   └── <span class="file">Admin.java</span>                 <span class="note">// extends User — full system control</span>
+│
+├── <span class="dir">factory/</span>
+│   ├── <span class="file">DonationFactory.java</span>       <span class="note">// Factory Method — creates Donation subtype from string type</span>
+│   └── <span class="file">UserFactory.java</span>           <span class="note">// Factory Method — creates Donor, Recipient, Volunteer, Admin</span>
+│
+├── <span class="dir">strategy/</span>
+│   ├── <span class="file">MatchingStrategy.java</span>      <span class="note">// Interface — Strategy pattern root</span>
+│   ├── <span class="file">NearestFirstStrategy.java</span>  <span class="note">// Match donor to geographically nearest recipient</span>
+│   ├── <span class="file">ExpiryFirstStrategy.java</span>   <span class="note">// Prioritize donations expiring soonest</span>
+│   └── <span class="file">CapacityBasedStrategy.java</span> <span class="note">// Match to recipient with highest remaining capacity</span>
+│
+├── <span class="dir">state/</span>
+│   ├── <span class="file">DonationState.java</span>         <span class="note">// Interface — State pattern root</span>
+│   ├── <span class="file">PendingReviewState.java</span>    <span class="note">// Awaiting verification chain</span>
+│   ├── <span class="file">AvailableState.java</span>        <span class="note">// Open for recipient claiming</span>
+│   ├── <span class="file">ClaimedState.java</span>          <span class="note">// Recipient claimed, awaiting volunteer pickup</span>
+│   ├── <span class="file">InTransitState.java</span>        <span class="note">// Volunteer picked up, en route</span>
+│   ├── <span class="file">DeliveredState.java</span>        <span class="note">// Terminal — successfully redistributed</span>
+│   └── <span class="file">ExpiredState.java</span>          <span class="note">// Terminal — passed expiry without delivery</span>
+│
+├── <span class="dir">command/</span>
+│   ├── <span class="file">DonationCommand.java</span>       <span class="note">// Interface — Command pattern root</span>
+│   ├── <span class="file">ClaimDonationCommand.java</span>  <span class="note">// Claim action — undoable</span>
+│   ├── <span class="file">CancelClaimCommand.java</span>    <span class="note">// Cancel — reverts to AVAILABLE</span>
+│   ├── <span class="file">MarkDeliveredCommand.java</span>  <span class="note">// Marks delivery complete</span>
+│   ├── <span class="file">CommandInvoker.java</span>        <span class="note">// Executes and maintains command history stack</span>
+│   └── <span class="file">AuditTrail.java</span>            <span class="note">// Immutable log of all executed commands</span>
+│
+├── <span class="dir">chain/</span>
+│   ├── <span class="file">VerificationHandler.java</span>   <span class="note">// Abstract — Chain of Responsibility base node</span>
+│   ├── <span class="file">ExpiryCheckHandler.java</span>    <span class="note">// Rejects donations already past expiry</span>
+│   ├── <span class="file">QuantityCheckHandler.java</span>  <span class="note">// Rejects zero-quantity donations</span>
+│   ├── <span class="file">LocationCheckHandler.java</span>  <span class="note">// Validates donor location is registered</span>
+│   └── <span class="file">ApprovalHandler.java</span>       <span class="note">// Final approval gate (auto or admin)</span>
+│
+├── <span class="dir">observer/</span>
+│   ├── <span class="file">SystemObserver.java</span>        <span class="note">// Interface — Observer pattern root</span>
+│   ├── <span class="file">RecipientNotifier.java</span>     <span class="note">// Alerts eligible recipients of new donation</span>
+│   ├── <span class="file">ImpactDashboard.java</span>       <span class="note">// Updates live stats: kg saved, meals, CO2</span>
+│   ├── <span class="file">AuditLogger.java</span>           <span class="note">// Logs every event to audit file</span>
+│   └── <span class="file">ExpiryWatcher.java</span>         <span class="note">// Monitors donations, escalates near-expiry</span>
+│
+├── <span class="dir">coordination/</span>
+│   ├── <span class="file">DonationCoordinator.java</span>   <span class="note">// Central hub — wires all layers together</span>
+│   ├── <span class="file">MatchingEngine.java</span>        <span class="note">// Uses active MatchingStrategy to rank recipients</span>
+│   └── <span class="file">VolunteerDispatcher.java</span>   <span class="note">// Assigns and notifies available volunteers</span>
+│
+├── <span class="dir">repository/</span>
+│   ├── <span class="file">DonationRepository.java</span>    <span class="note">// Interface — CRUD for Donations</span>
+│   ├── <span class="file">UserRepository.java</span>        <span class="note">// Interface — CRUD for Users</span>
+│   └── <span class="file">InMemoryDonationRepo.java</span>  <span class="note">// Phase 1 in-memory implementation</span>
+│
+└── <span class="file">Main.java</span>                      <span class="note">// Entry point — wires all dependencies, launches CLI</span>
+</pre>
+    </div>
+  </div>
+</section>
+
+<!-- PATTERNS -->
+<section id="patterns">
+  <div class="container">
+    <div class="section-eyebrow">Design Patterns</div>
+    <h2>Six Patterns — Six Real Problems Solved</h2>
+    <p>Every pattern below solves a concrete problem. Removing any one of them would cause a real architectural failure — they are not decorative.</p>
+
+    <div class="pattern-block">
+      <div class="pattern-meta">Pattern 1 · Behavioral — Observer</div>
+      <h4>Observer Pattern — Real-Time Notifications &amp; Decoupled Event Propagation</h4>
+      <p><strong>Problem solved:</strong> When a new donation is posted, multiple subsystems must react: recipients must be notified, the dashboard must update, the audit log must record the event, and the expiry watcher must start monitoring. Hardcoding these calls inside the coordinator creates tight coupling and makes adding any new listener (e.g., SMS gateway) require modifying core business logic.<br/>
+      <strong>How it works:</strong> <code>DonationCoordinator</code> holds a list of <code>SystemObserver</code> implementors. On every significant event (donation posted, claimed, delivered), it calls <code>notifyAll(event)</code>. Each observer reacts independently: <code>RecipientNotifier</code> alerts eligible recipients, <code>ImpactDashboard</code> increments counters, <code>AuditLogger</code> persists the record, <code>ExpiryWatcher</code> schedules an expiry check.<br/>
+      <strong>Why it matters:</strong> Adding an SMS notification service requires zero changes to business logic — just implement <code>SystemObserver</code> and register. Open/Closed Principle fully upheld.</p>
+      <div class="tags">
+        <span class="tag green">SystemObserver.java</span>
+        <span class="tag green">RecipientNotifier</span>
+        <span class="tag green">ImpactDashboard</span>
+        <span class="tag green">AuditLogger</span>
+        <span class="tag green">ExpiryWatcher</span>
+      </div>
+    </div>
+
+    <div class="pattern-block blue">
+      <div class="pattern-meta">Pattern 2 · Behavioral — Strategy</div>
+      <h4>Strategy Pattern — Swappable Matching Algorithms at Runtime</h4>
+      <p><strong>Problem solved:</strong> The ideal way to match a food donation to a recipient changes based on context: during normal hours, use nearest-first to minimize spoilage. During crisis, use capacity-based to maximize meals served. On urgent donations, use expiry-first regardless of distance. Baking any single algorithm into the coordinator makes switching impossible without risky code changes.<br/>
+      <strong>How it works:</strong> <code>MatchingEngine</code> holds a reference to a <code>MatchingStrategy</code> interface. Admin calls <code>engine.setStrategy(new ExpiryFirstStrategy())</code> at runtime. The engine calls <code>strategy.findBestMatch(donation, recipients)</code> — it never knows which concrete algorithm it is using.<br/>
+      <strong>Why it matters:</strong> Adding a new algorithm (e.g., ML-based scoring) requires implementing one interface and one line of wiring. All existing algorithms are untouched.</p>
+      <div class="tags">
+        <span class="tag blue">MatchingStrategy.java</span>
+        <span class="tag blue">NearestFirstStrategy</span>
+        <span class="tag blue">ExpiryFirstStrategy</span>
+        <span class="tag blue">CapacityBasedStrategy</span>
+      </div>
+    </div>
+
+    <div class="pattern-block gold">
+      <div class="pattern-meta">Pattern 3 · Creational — Factory Method</div>
+      <h4>Factory Pattern — Dynamic Domain Object Creation</h4>
+      <p><strong>Problem solved:</strong> Different donation types (perishable, dry food, prepared meals) have different attributes, validation rules, and expiry behaviors. Different user roles have different permissions. Allowing callers to use <code>new PerishableDonation()</code> directly spreads construction logic everywhere and makes adding a new type require finding and updating all <code>new</code> call sites.<br/>
+      <strong>How it works:</strong> <code>DonationFactory.create("PERISHABLE", params)</code> returns the correct subclass. <code>UserFactory.create("DONOR", params)</code> returns a <code>Donor</code>. All construction logic lives in one place.<br/>
+      <strong>Why it matters:</strong> Adding a new donation type — say, <em>FrozenFoodDonation</em> — requires adding one class and one factory case. No other code changes anywhere in the system.</p>
+      <div class="tags">
+        <span class="tag gold">DonationFactory.java</span>
+        <span class="tag gold">UserFactory.java</span>
+        <span class="tag gold">PerishableDonation</span>
+        <span class="tag gold">DryFoodDonation</span>
+        <span class="tag gold">PreparedMealDonation</span>
+      </div>
+    </div>
+
+    <div class="pattern-block red">
+      <div class="pattern-meta">Pattern 4 · Behavioral — State</div>
+      <h4>State Pattern — Donation Lifecycle Management</h4>
+      <p><strong>Problem solved:</strong> A donation exists in 7 distinct states with different legal transitions (you cannot claim an IN_TRANSIT donation; you cannot deliver an EXPIRED one). Without the State pattern, the coordinator becomes a massive if-else chain with state-checking logic tangled through every method — violating Single Responsibility massively.<br/>
+      <strong>How it works:</strong> Each state is a class implementing <code>DonationState</code>. The <code>Donation</code> object holds a reference to its current state. When an action is called (e.g., <code>donation.claim(recipient)</code>), the call delegates to the current state object, which either performs the legal transition or throws an illegal-state exception.<br/>
+      <strong>Why it matters:</strong> Each state class encapsulates exactly what is legal in that state. No if-else chains. Adding a new state requires one new class only.</p>
+      <div class="tags">
+        <span class="tag red">DonationState.java</span>
+        <span class="tag red">AvailableState</span>
+        <span class="tag red">ClaimedState</span>
+        <span class="tag red">InTransitState</span>
+        <span class="tag red">DeliveredState</span>
+        <span class="tag red">ExpiredState</span>
+      </div>
+    </div>
+
+    <div class="pattern-block purple">
+      <div class="pattern-meta">Pattern 5 · Behavioral — Command</div>
+      <h4>Command Pattern — Undoable Actions &amp; Full Audit Trail</h4>
+      <p><strong>Problem solved:</strong> Every action (claiming, cancelling, delivering) must be: (a) undoable in case of errors, (b) logged for legal accountability, (c) replayable for dispute resolution. Calling methods directly makes none of these possible without massive infrastructure bolted onto the outside of the system.<br/>
+      <strong>How it works:</strong> Every user action is wrapped in a <code>DonationCommand</code> with <code>execute()</code> and <code>undo()</code>. The <code>CommandInvoker</code> maintains a stack of executed commands. Undo pops and reverses the state transition. <code>AuditTrail</code> records every executed command with timestamp, actor, and target.<br/>
+      <strong>Why it matters:</strong> Dispute resolution becomes trivial: replay the command history. ACM Code of Ethics §1.2 (accountability) is upheld by design — not as an afterthought.</p>
+      <div class="tags">
+        <span class="tag purple">DonationCommand.java</span>
+        <span class="tag purple">ClaimDonationCommand</span>
+        <span class="tag purple">CancelClaimCommand</span>
+        <span class="tag purple">CommandInvoker</span>
+        <span class="tag purple">AuditTrail</span>
+      </div>
+    </div>
+
+    <div class="pattern-block teal">
+      <div class="pattern-meta">Pattern 6 · Behavioral — Chain of Responsibility</div>
+      <h4>Chain of Responsibility — Multi-Step Donation Verification</h4>
+      <p><strong>Problem solved:</strong> Before a donation is made AVAILABLE, it must pass multiple sequential checks: Is it expired? Is the quantity non-zero? Is the donor location registered? Has admin approved it? Hardcoding all checks in one validator violates SRP and makes reordering or removing checks risky across the entire codebase.<br/>
+      <strong>How it works:</strong> Each check is a <code>VerificationHandler</code> subclass. Each handler holds a reference to the next handler. If a check passes, it calls <code>next.handle(donation)</code>. If it fails, it returns a rejection with a specific reason. Chain assembled at startup: Expiry → Quantity → Location → Approval.<br/>
+      <strong>Why it matters:</strong> Adding a new check (e.g., food safety certification) requires one new handler class inserted into the chain — no existing handlers change.</p>
+      <div class="tags">
+        <span class="tag teal">VerificationHandler.java</span>
+        <span class="tag teal">ExpiryCheckHandler</span>
+        <span class="tag teal">QuantityCheckHandler</span>
+        <span class="tag teal">LocationCheckHandler</span>
+        <span class="tag teal">ApprovalHandler</span>
+      </div>
+    </div>
+
+    <h3>SOLID Principles Alignment</h3>
+    <div class="card-grid">
+      <div class="card green"><div class="card-label">S — Single Responsibility</div><h4>One Class, One Reason to Change</h4><p>Matching logic lives in MatchingEngine. Notification logic in RecipientNotifier. Persistence in Repository. Audit in AuditTrail. None overlap.</p></div>
+      <div class="card blue"><div class="card-label">O — Open / Closed</div><h4>Extend, Never Modify</h4><p>New donation type via Factory. New matching algorithm via Strategy. New event listener via Observer. New verification step via Chain. Zero existing code touched in each case.</p></div>
+      <div class="card gold"><div class="card-label">L — Liskov Substitution</div><h4>Subtypes Honor Contracts</h4><p>PerishableDonation, DryFoodDonation, PreparedMealDonation all behave as valid Donation objects everywhere Donation is expected.</p></div>
+      <div class="card red"><div class="card-label">D — Dependency Inversion</div><h4>Depend on Abstractions</h4><p>DonationCoordinator depends on MatchingStrategy interface, not concrete algorithms. Repository depends on interfaces, never on InMemoryRepo directly.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section id="usecases">
+  <div class="container">
+    <div class="section-eyebrow">Use Case Analysis</div>
+    <h2>Actors, Goals &amp; 10 Use Cases</h2>
+    <table class="uc-table">
+      <thead>
+        <tr>
+          <th>ID</th><th>Use Case</th><th>Actor</th><th>Precondition</th><th>Main Flow</th><th>Pattern(s)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="uc-id">UC-01</td><td><strong>Post Food Donation</strong></td><td>Donor</td><td>Donor registered &amp; logged in</td>
+          <td>Donor enters food type, quantity, expiry, location → DonationFactory creates correct subtype → Verification chain validates → status set AVAILABLE → Observers notified</td>
+          <td>Factory, Chain, Observer</td>
+        </tr>
+        <tr>
+          <td class="uc-id">UC-02</td><td><strong>Claim a Donation</strong></td><td>Recipient</td><td>Donation status is AVAILABLE</td>
+          <td>Recipient selects donation → ClaimDonationCommand created and executed → state transitions AVAILABLE→CLAIMED → Observers notified → VolunteerDispatcher assigns pickup</td>
+          <td>Command, State, Observer</td>
+        </tr>
+        <tr>
+          <td class="uc-id">UC-03</td><td><strong>Auto-Match to Recipient</strong></td><td>System</td><td>Donation posted, recipients registered</td>
+          <td>MatchingEngine invokes active MatchingStrategy → strategy returns ranked recipient list → top match notified first → timeout fallback to next recipient</td>
+          <td>Strategy, Observer</td>
+        </tr>
+        <tr>
+          <td class="uc-id">UC-04</td><td><strong>Cancel a Claim</strong></td><td>Recipient</td><td>Donation status CLAIMED by this Recipient</td>
+          <td>Recipient triggers cancel → CancelClaimCommand executed → state reverts CLAIMED→AVAILABLE → CommandInvoker records undo history → Observers re-notify other recipients</td>
+          <td>Command, State, Observer</td>
+        </tr>
+        <tr>
+          <td class="uc-id">UC-05</td><td><strong>Volunteer Pickup &amp; Delivery</strong></td><td>Volunteer</td><td>Donation CLAIMED, Volunteer assigned</td>
+          <td>Volunteer confirms pickup → CLAIMED→IN_TRANSIT → Volunteer confirms delivery → MarkDeliveredCommand → IN_TRANSIT→DELIVERED → ImpactDashboard updated</td>
+          <td>State, Command, Observer</td>
+        </tr>
+        <tr>
+          <td class="uc-id">UC-06</td><td><strong>View Impact Dashboard</strong></td><td>Any User</td><td>System has completed transactions</td>
+          <td>User opens dashboard → ImpactDashboard Observer provides live totals: kg food saved, meals served, CO₂ avoided, top donors, top recipients, active count</td>
+          <td>Observer</td>
+        </tr>
+        <tr>
+          <td class="uc-id">UC-07</td><td><strong>Handle Expired Donation</strong></td><td>System</td><td>Donation AVAILABLE past expiry time</td>
+          <td>ExpiryWatcher Observer detects expiry → triggers AVAILABLE→EXPIRED state transition → Observers notified → Donor alerted → donation removed from active pool</td>
+          <td>Observer, State</td>
+        </tr>
+        <tr>
+          <td class="uc-id">UC-08</td><td><strong>Switch Matching Strategy</strong></td><td>Admin</td><td>Admin logged in</td>
+          <td>Admin selects new strategy from menu → MatchingEngine.setStrategy(new ExpiryFirstStrategy()) → all future matches immediately use new algorithm, no restart required</td>
+          <td>Strategy</td>
+        </tr>
+        <tr>
+          <td class="uc-id">UC-09</td><td><strong>Undo Incorrect Action</strong></td><td>Admin</td><td>At least one Command in invoker stack</td>
+          <td>Admin triggers undo → CommandInvoker.undo() pops last DonationCommand → command.undo() reverses state transition → AuditTrail records the undo operation</td>
+          <td>Command, State</td>
+        </tr>
+        <tr>
+          <td class="uc-id">UC-10</td><td><strong>Generate Audit Report</strong></td><td>Admin</td><td>System has recorded transactions</td>
+          <td>Admin requests report for a date range → AuditTrail replays all Commands chronologically → Report: who did what, when, on which donation — suitable for regulatory review</td>
+          <td>Command, Observer</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- UML -->
+<section id="uml">
+  <div class="container">
+    <div class="section-eyebrow">UML &amp; System Design</div>
+    <h2>Class Relationships &amp; Diagram Descriptions</h2>
+    <p>Use these descriptions to draw your UML diagrams in draw.io, StarUML, or PlantUML. Every relationship below maps directly to a pattern or SOLID principle.</p>
+
+    <h3>Class Diagram — Domain Hierarchy</h3>
+    <div class="arch-diagram">
+<pre>
+<span class="hl">«abstract»                          «abstract»</span>
+<span class="hl">Donation</span>                            <span class="hl">User</span>
+───────────────────────             ───────────────────────
+- id: UUID                          - id: UUID
+- quantity: double                  - name: String
+- unit: String                      - email: String
+- donorId: UUID                     - location: Location
+- postedAt: LocalDateTime           + getRole(): String
+- state: DonationState  ─────┐               ↑ extends
++ post(): void               │      ┌─────────┼─────────┬──────────┐
++ claim(r: Recipient)        │    Donor  Recipient  Volunteer  Admin
++ markPickedUp()             │    -orgName -capacity -vehicle   -permissions
++ markDelivered()            │    +post()  +claim()  +confirm() +manage()
++ cancel()                   │
+       ↑ extends             │    <span class="hl2">DonationFactory</span>     <span class="hl2">UserFactory</span>
+  ┌────┼─────────┐           │    ──────────────────────────────────
+Perishable DryFood Prepared  │    + create(type,params): Donation
+Donation   Donation Meal     │    + create(role,params): User
+-tempReq   -shelf   -servings│
+                             │
+<span class="hl3">«interface»</span>                  │    <span class="hl4">«interface»</span>
+<span class="hl3">DonationState</span>  ◄─────────────┘    <span class="hl4">MatchingStrategy</span>
+──────────────────────            ──────────────────────
++ claim(r): void                  + findBestMatch(
++ pickUp(): void                      donation: Donation,
++ deliver(): void                     recipients: List
++ cancel(): void                    ): Recipient
+       ↑ implements                        ↑ implements
+  ┌────┼────────────────┐         ┌────────┼────────────────┐
+Available Claimed InTransit    NearestFirst ExpiryFirst Capacity
+State     State   State        Strategy     Strategy    Strategy
+
+<span class="hl5">«interface»</span>                       <span class="hl5">«interface»</span>
+<span class="hl5">DonationCommand</span>                   <span class="hl5">SystemObserver</span>
+───────────────────────           ───────────────────────────
++ execute(): void                 + onDonationPosted(d)
++ undo(): void                    + onDonationClaimed(d, r)
+       ↑ implements               + onDonationDelivered(d)
+  ┌────┼──────────────┐           + onDonationExpired(d)
+Claim  Cancel  MarkDelivered             ↑ implements
+Cmd    Cmd     Cmd              ┌────────┼──────────┬──────────┐
+                            RecipientNotifier ImpactDashboard AuditLogger
+
+<span class="hl">«abstract»</span>
+<span class="hl">VerificationHandler</span>
+──────────────────────────────────
+# next: VerificationHandler
++ handle(d: Donation): Result
++ setNext(h: VerificationHandler)
+       ↑ extends
+  ┌────┼────────────────┬─────────────┐
+ExpiryCheck QuantityCheck LocationCheck ApprovalHandler
+</pre>
+    </div>
+
+    <h3>Sequence Diagram — UC-01: Donor Posts Food Donation</h3>
+    <div class="arch-diagram">
+<pre>
+Donor        Coordinator    DonationFactory  VerificationChain   Donation    Observers
+  │               │                │                │               │            │
+  │──postDonation(params)─────────►│                │               │            │
+  │               │──create(type)──►│                │               │            │
+  │               │◄──donation──────│                │               │            │
+  │               │──chain.handle(donation)─────────►│               │            │
+  │               │    ExpiryCheck ─► QuantityCheck ─► LocationCheck ─► Approval  │
+  │               │◄──VERIFIED──────────────────────│               │            │
+  │               │──donation.setState(AVAILABLE)───────────────────►│            │
+  │               │──notifyAll(DONATION_POSTED)──────────────────────────────────►│
+  │               │                                                  │  RecipientNotifier.onDonationPosted()
+  │               │                                                  │  ImpactDashboard.onDonationPosted()
+  │               │                                                  │  AuditLogger.onDonationPosted()
+  │◄──success─────│               │                │               │            │
+</pre>
+    </div>
+
+    <h3>Sequence Diagram — UC-02: Recipient Claims Donation</h3>
+    <div class="arch-diagram">
+<pre>
+Recipient    Coordinator   CommandInvoker   ClaimCommand   DonationState   Observers
+  │               │               │               │               │            │
+  │──claim(id)────►│               │               │               │            │
+  │               │──new ClaimDonationCommand(d, r)───────────────►│            │
+  │               │──invoker.execute(cmd)──────────►               │            │
+  │               │               │──cmd.execute()►               │            │
+  │               │               │               │──claim(recip)─►│            │
+  │               │               │               │  AVAILABLE ──► CLAIMED      │
+  │               │               │──push(cmd onto stack)          │            │
+  │               │──notifyAll(DONATION_CLAIMED)───────────────────────────────►│
+  │               │                               │               │   VolunteerDispatcher.onClaimed()
+  │               │                               │               │   AuditLogger.onClaimed()
+  │◄──confirmation│               │               │               │            │
+</pre>
+    </div>
+
+    <h3>State Diagram — Complete Donation Lifecycle</h3>
+    <div class="arch-diagram">
+<pre>
+                  ┌────────────────────┐
+        ──────►   │   PENDING_REVIEW   │  Donor posts → verification chain runs
+                  └──────────┬─────────┘
+                     verified │           │ rejected (chain fails)
+                             ▼           ▼
+                  ┌──────────────┐   ┌──────────┐
+                  │  AVAILABLE   │   │ REJECTED  │ ◄ terminal (logged)
+                  └──────┬───────┘   └──────────┘
+            claim │       │ expiry exceeded (ExpiryWatcher fires)
+                  │       ▼
+                  │   ┌──────────┐
+                  │   │  EXPIRED  │ ◄ terminal (donor notified)
+                  │   └──────────┘
+                  ▼
+           ┌──────────────┐
+           │   CLAIMED    │ ◄──────┐
+           └──────┬───────┘        │ recipient cancels (CancelClaimCommand)
+      volunteer   │                └─────────────────────────────────────────┐
+      picks up    ▼                                                          │
+           ┌──────────────┐                                                  │
+           │  IN_TRANSIT  │  Volunteer en route to recipient                 │
+           └──────┬───────┘                                                  │
+      delivered   │                                                          │
+                  ▼                                                          │
+           ┌──────────────┐                                                  │
+           │  DELIVERED   │ ◄ terminal — ImpactDashboard updated ◄───────────┘
+           └──────────────┘
+</pre>
+    </div>
+
+    <h3>Chain of Responsibility — Verification Flow</h3>
+    <div class="arch-diagram">
+<pre>
+ New Donation Submitted by Donor
+          │
+          ▼
+ ┌────────────────────────┐
+ │   ExpiryCheckHandler   │── FAIL ──► REJECTED: "Donation already expired."
+ │   is expiryTime &gt; now? │
+ └───────────┬────────────┘
+             │ PASS
+             ▼
+ ┌────────────────────────┐
+ │  QuantityCheckHandler  │── FAIL ──► REJECTED: "Quantity must be &gt; 0."
+ │   quantity &gt; 0?        │
+ └───────────┬────────────┘
+             │ PASS
+             ▼
+ ┌────────────────────────┐
+ │  LocationCheckHandler  │── FAIL ──► REJECTED: "Donor location not registered."
+ │   location registered? │
+ └───────────┬────────────┘
+             │ PASS
+             ▼
+ ┌────────────────────────┐
+ │    ApprovalHandler     │── FAIL ──► PENDING: "Awaiting admin review."
+ │  (auto or admin gate)  │
+ └───────────┬────────────┘
+             │ PASS
+             ▼
+    VERIFIED ─► Donation.setState(AVAILABLE)
+              ─► notifyAll(DONATION_POSTED) ─► Observers fire
+</pre>
+    </div>
+  </div>
+</section>
+
+<!-- PLO -->
+<section id="plos">
+  <div class="container">
+    <div class="section-eyebrow">Course Alignment</div>
+    <h2>Program Learning Outcome Mapping</h2>
+    <p>Every PLO is addressed by a specific, concrete deliverable — not as an afterthought, but as a structural decision that shapes the system's design.</p>
+    <table class="plo-table">
+      <thead>
+        <tr><th>PLO</th><th>Description</th><th>How FoodBridge Addresses It</th><th>Deliverable</th><th>✓</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="plo-num">PLO 1<br/>Academic</td><td>Completion of accredited computing program</td><td>Full Java OOP project demonstrating graduate-level design competency across all deliverables</td><td>Complete Java project + documentation + this blueprint</td><td class="plo-status">✅</td></tr>
+        <tr><td class="plo-num">PLO 2<br/>Knowledge</td><td>Apply CS fundamentals to complex problems</td><td>Algorithm analysis: O(n log n) for NearestFirst sort. State machine theory applied to lifecycle. Chain pattern models formal automata. Command pattern maps to transaction theory.</td><td>Algorithm analysis section in report; complexity commented in strategy classes</td><td class="plo-status">✅</td></tr>
+        <tr><td class="plo-num">PLO 3<br/>Analysis</td><td>Identify, formulate, analyze complex problems</td><td>Formal problem statement: coordination failure in food redistribution. 4 actors, 10 use cases, 7 donation states, 3 matching algorithms identified and documented. Trade-offs between strategies analyzed.</td><td>Requirements document + use case table + this blueprint</td><td class="plo-status">✅</td></tr>
+        <tr><td class="plo-num">PLO 4<br/>Design</td><td>Design systems meeting specified needs</td><td>6 design patterns each justified for a specific problem. 5-layer architecture. Full UML: class diagrams, 2 sequence diagrams, state diagram, chain diagram. SOLID principles enforced throughout.</td><td>UML diagrams + architecture document + pattern justification sections</td><td class="plo-status">✅</td></tr>
+        <tr><td class="plo-num">PLO 5<br/>Tools</td><td>Select and apply modern computing tools</td><td>Java 17+, Maven/Gradle build, JUnit 5 tests (assert claim transition works; assert chain rejects expired donations; assert strategy returns correct recipient). Git version history showing iterative design.</td><td>pom.xml + JUnit test classes + Git commit history</td><td class="plo-status">✅</td></tr>
+        <tr><td class="plo-num">PLO 6<br/>Teamwork</td><td>Function effectively in diverse teams</td><td>Two-member team with documented module ownership (Member A: domain + factory + chain + state; Member B: observer + strategy + command + coordination). Git branches per module.</td><td>Team contribution matrix + Git branch/PR history</td><td class="plo-status">✅</td></tr>
+        <tr><td class="plo-num">PLO 7<br/>Communication</td><td>Communicate effectively on complex activities</td><td>Live demo: post a donation, watch auto-matching, claim it, volunteer delivery, see dashboard update — all demonstrable end-to-end. This HTML blueprint is the primary communication artifact.</td><td>Live demo + presentation slides + this HTML blueprint document</td><td class="plo-status">✅</td></tr>
+        <tr><td class="plo-num">PLO 8<br/>Society</td><td>Assess societal, safety, legal issues</td><td>Written analysis: food safety liability, privacy of shelter locations, equitable access for small vs. large NGOs in matching algorithm, food safety regulation compliance.</td><td>Ethics and societal impact section in final report</td><td class="plo-status">✅</td></tr>
+        <tr><td class="plo-num">PLO 9<br/>Ethics</td><td>Commit to professional ethics</td><td>Discuss: Who is liable if donated food causes harm? Should matching algorithms favor efficiency or equity? Is location data collection consent-appropriate? Command/AuditTrail addresses ACM Code §1.2 accountability.</td><td>Ethics discussion in report + demo talking points</td><td class="plo-status">✅</td></tr>
+        <tr><td class="plo-num">PLO 10<br/>Learning</td><td>Lifelong learning and adaptation</td><td>Future work section: ML-based demand prediction, REST API, mobile app, WhatsApp notifications (new Observer), blockchain audit trail (Command storage swap) — shows architectural extensibility awareness.</td><td>Future work section in final report</td><td class="plo-status">✅</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="container">
+    <div class="section-eyebrow">Development Roadmap</div>
+    <h2>Phased Build Milestones</h2>
+    <p>Follow this order strictly. Each milestone produces independently testable output before the next begins. Each is assigned to reduce parallel conflict between team members.</p>
+
+    <div class="milestones">
+      <div class="milestone">
+        <div class="milestone-dot">M1</div>
+        <div class="milestone-body">
+          <h4>Domain Model &amp; Factory (Week 1–2) — Member A</h4>
+          <p>Define abstract <code>Donation</code> and <code>User</code>. Implement all three <code>Donation</code> subclasses and all four <code>User</code> subclasses. Implement <code>DonationFactory</code> and <code>UserFactory</code>. Write JUnit tests asserting correct subtype creation from string input. Get domain foundations rock-solid before anything else.</p>
+        </div>
+      </div>
+      <div class="milestone">
+        <div class="milestone-dot">M2</div>
+        <div class="milestone-body">
+          <h4>State Machine &amp; Chain of Responsibility (Week 2–3) — Member A</h4>
+          <p>Implement all 6 <code>DonationState</code> classes with legal transition enforcement (throw exception on illegal transitions). Implement 4 <code>VerificationHandler</code> subclasses and assemble default chain. JUnit: assert expired donation rejected at ExpiryCheckHandler; assert valid donation passes all handlers and reaches AVAILABLE state.</p>
+        </div>
+      </div>
+      <div class="milestone">
+        <div class="milestone-dot">M3</div>
+        <div class="milestone-body">
+          <h4>Command Pattern &amp; Audit Trail (Week 3–4) — Member B</h4>
+          <p>Implement <code>DonationCommand</code> interface and three concrete commands. Implement <code>CommandInvoker</code> with push/pop stack and <code>undo()</code>. Implement <code>AuditTrail</code> logging all commands with timestamps. JUnit: execute claim → undo → assert AVAILABLE restored. Verify audit log entries created.</p>
+        </div>
+      </div>
+      <div class="milestone">
+        <div class="milestone-dot">M4</div>
+        <div class="milestone-body">
+          <h4>Observer System &amp; Strategy Pattern (Week 4–5) — Member B</h4>
+          <p>Implement <code>SystemObserver</code> interface and all four concrete observers. Implement <code>MatchingStrategy</code> and all three strategies. Implement <code>MatchingEngine</code> with runtime <code>setStrategy()</code>. JUnit: post donation, assert RecipientNotifier fires. Switch strategy at runtime, assert new strategy invoked on next match.</p>
+        </div>
+      </div>
+      <div class="milestone">
+        <div class="milestone-dot">M5</div>
+        <div class="milestone-body">
+          <h4>Coordination Layer &amp; CLI (Week 5–6) — Both Members</h4>
+          <p>Implement <code>DonationCoordinator</code> wiring verification chain + matching engine + command invoker + observer bus. Implement <code>ConsoleUI</code> with menus for each actor type. Wire through <code>Main.java</code>. Run end-to-end: Donor posts → auto-match → Recipient claims → Volunteer delivers → Dashboard updates → Audit log written.</p>
+        </div>
+      </div>
+      <div class="milestone">
+        <div class="milestone-dot">M6</div>
+        <div class="milestone-body">
+          <h4>Testing, UML Diagrams &amp; Final Report (Week 6–7) — Both Members</h4>
+          <p>Full JUnit test suite covering all patterns. Draw UML diagrams from the descriptions in this blueprint (draw.io recommended). Write final report mapping every design decision to a PLO. Prepare demo script: post donation → show chain rejection → post valid → auto-match → claim → deliver → show dashboard → show audit log → demonstrate undo → present ethics analysis.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Team Division of Responsibility</h3>
+    <div class="card-grid">
+      <div class="card green"><div class="card-label">Member A — Core</div><h4>Domain + State + Chain</h4><p>Domain model, Factory pattern, State machine (all 6 states), Chain of Responsibility (all 4 handlers), Repository layer, JUnit tests for M1 and M2.</p></div>
+      <div class="card blue"><div class="card-label">Member B — Events</div><h4>Command + Observer + Strategy</h4><p>Command pattern (3 commands + invoker + audit), Observer system (4 observers), Strategy pattern (3 algorithms + engine), JUnit tests for M3 and M4.</p></div>
+      <div class="card gold"><div class="card-label">Shared — Integration</div><h4>Coordinator + Presentation</h4><p>DonationCoordinator wiring, ConsoleUI, Main.java, UML diagrams, final report, ethics section, demo preparation.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ETHICS -->
+<section id="ethics">
+  <div class="container">
+    <div class="section-eyebrow">Ethics &amp; Society — PLO 8 &amp; 9</div>
+    <h2>Ethical Dimensions of Algorithmic Food Redistribution</h2>
+    <p>FoodBridge operates at the intersection of social good and software responsibility. Building a system that redistrib­utes food to vulnerable populations creates ethical obligations that connect directly to computing professionalism standards.</p>
+
+    <div class="ethics-box">
+      <h4>1. Liability &amp; Food Safety — Who is Responsible?</h4>
+      <p>If a recipient NGO distributes donated food that causes illness, who bears legal responsibility — the donor, the volunteer, or the platform? FoodBridge's Chain of Responsibility (which rejects expired donations) and full AuditTrail (Command pattern) create a timestamped, immutable record of every actor's action, directly addressing ACM Code of Ethics §1.2 (avoid harm) by providing accountability. The software itself acts as a safety gate — not just a passive connector.</p>
+    </div>
+
+    <div class="ethics-box">
+      <h4>2. Algorithmic Equity — Efficiency vs. Fairness</h4>
+      <p>The NearestFirst matching strategy efficiently minimizes food spoilage transit time, but it systematically favors recipients near wealthy donor-dense city centers, while rural or peripheral shelters — often serving the most vulnerable — receive fewer donations. FoodBridge's Strategy pattern makes this trade-off explicit and reconfigurable: an admin can consciously choose a NeedFirst algorithm. The act of choosing a matching algorithm is an ethical decision, not just a technical one — this is a powerful point to make during your defense.</p>
+    </div>
+
+    <div class="ethics-box">
+      <h4>3. Location Privacy — Where People Seek Help</h4>
+      <p>Both donors and recipients must register physical locations for the matching algorithm to function. Recipient shelter locations may house at-risk individuals (domestic violence survivors, undocumented persons). Should exact addresses be shared with volunteers? FoodBridge should anonymize location data to proximity zones rather than exact coordinates — a deliberate architectural privacy-by-design decision aligned with ACM Code §1.6 (respect privacy).</p>
+    </div>
+
+    <div class="ethics-box">
+      <h4>4. Algorithmic Bias in Recipient Scoring</h4>
+      <p>If the system tracks recipient reliability scores (e.g., failure-to-collect rate) and factors them into matching, a small NGO that missed one pickup due to a vehicle breakdown may be penalized indefinitely. Bias in social welfare allocation has real human costs. FoodBridge's ImpactDashboard should report distribution equity metrics — not just total volume — giving administrators data to identify and correct systemic bias in outcomes before it entrenches.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FUTURE WORK -->
+<section>
+  <div class="container">
+    <div class="section-eyebrow">Future Work — PLO 10</div>
+    <h2>Where FoodBridge Can Grow</h2>
+    <p>The architecture is deliberately designed to accommodate these extensions without modifying existing code — each represents a natural growth path enabled by the patterns already in place.</p>
+    <div class="card-grid">
+      <div class="card green"><div class="card-label">AI / ML</div><h4>Predictive Demand Forecasting</h4><p>Train a model on historical patterns to predict which areas will have surplus or deficit food — implement as a new MatchingStrategy without touching existing algorithms.</p></div>
+      <div class="card blue"><div class="card-label">Interface</div><h4>JavaFX / Web Dashboard</h4><p>Replace ConsoleUI with JavaFX or Spring Boot REST. Observer pattern makes this a drop-in — UI is just another Observer on the existing event bus.</p></div>
+      <div class="card gold"><div class="card-label">Notifications</div><h4>WhatsApp / SMS Alerts</h4><p>Implement SystemObserver backed by Twilio API. Zero changes to business logic — one new Observer class registered at startup.</p></div>
+      <div class="card red"><div class="card-label">Trust</div><h4>Blockchain Audit Trail</h4><p>Replace file-based AuditTrail with an immutable blockchain ledger. Command pattern already produces the perfect transaction record — persisting it differently is a storage swap.</p></div>
+      <div class="card purple"><div class="card-label">Engagement</div><h4>Volunteer Gamification</h4><p>Track volunteer impact points per delivery (Observer on DELIVERED events). Leaderboard and badge system to incentivize consistent volunteering — zero core changes.</p></div>
+      <div class="card teal"><div class="card-label">Scale</div><h4>Multi-City Federation</h4><p>Each city runs its own FoodBridge instance. Cross-city routing when local demand is saturated. Architecture already supports clean separation at the coordinator level.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong><span>FoodBridge</span> — Smart Food Surplus Redistribution Platform</strong><br/>
+  Software Design &amp; Analysis · CS-3004 · Fall 2026 · Java · 6 Design Patterns · 10 PLOs Covered<br/>
+  <span style="color:#3a6a3a; font-style: italic; margin-top:.5rem; display:inline-block; font-style: normal; letter-spacing: .02em;">
+    "Every kilogram of food saved is a software design decision made right."
+  </span>
+</footer>
+
+</body>
+</html>

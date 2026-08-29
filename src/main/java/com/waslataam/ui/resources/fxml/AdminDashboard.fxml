@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.AdminDashboardController"
+      spacing="20" styleClass="root">
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+    
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label fx:id="welcomeLabel" text="Admin Dashboard" styleClass="header-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Refresh" styleClass="button-secondary" onAction="#handleRefresh"/>
+    </HBox>
+    
+    <Separator/>
+    
+    <HBox spacing="20" styleClass="stat-row">
+        <VBox fx:id="totalDonationsCard" styleClass="stat-card stat-card-green" prefWidth="200" HBox.hgrow="ALWAYS">
+            <Label text="Total Donations" styleClass="label-text"/>
+            <Label fx:id="totalDonationsValue" text="0" styleClass="value-label"/>
+        </VBox>
+        <VBox fx:id="activeDonationsCard" styleClass="stat-card stat-card-blue" prefWidth="200" HBox.hgrow="ALWAYS">
+            <Label text="Active Donations" styleClass="label-text"/>
+            <Label fx:id="activeDonationsValue" text="0" styleClass="value-label"/>
+        </VBox>
+        <VBox fx:id="deliveredCard" styleClass="stat-card stat-card-gold" prefWidth="200" HBox.hgrow="ALWAYS">
+            <Label text="Delivered" styleClass="label-text"/>
+            <Label fx:id="deliveredValue" text="0" styleClass="value-label"/>
+        </VBox>
+        <VBox fx:id="expiredCard" styleClass="stat-card stat-card-orange" prefWidth="200" HBox.hgrow="ALWAYS">
+            <Label text="Expired" styleClass="label-text"/>
+            <Label fx:id="expiredValue" text="0" styleClass="value-label"/>
+        </VBox>
+    </HBox>
+    
+    <Separator/>
+    
+    <HBox spacing="20">
+        <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e0e8e2; -fx-border-radius: 8;">
+            <Label text="Quick Actions" styleClass="card-title"/>
+            <Button text="Manage Matching Strategy" styleClass="button" maxWidth="Infinity" onAction="#handleStrategySwitcher"/>
+            <Button text="View Audit Report" styleClass="button" maxWidth="Infinity" onAction="#handleAuditReport"/>
+            <Button text="View Impact Dashboard" styleClass="button" maxWidth="Infinity" onAction="#handleImpactDashboard"/>
+        </VBox>
+        
+        <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e0e8e2; -fx-border-radius: 8;">
+            <Label text="Recent Activity" styleClass="card-title"/>
+            <TableView fx:id="recentActivityTable" prefHeight="200">
+                <columns>
+                    <TableColumn text="Time" prefWidth="120">
+                        <cellValueFactory><PropertyValueFactory property="timestamp"/></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Action" prefWidth="200">
+                        <cellValueFactory><PropertyValueFactory property="action"/></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Actor" prefWidth="150">
+                        <cellValueFactory><PropertyValueFactory property="actor"/></cellValueFactory>
+                    </TableColumn>
+                </columns>
+                <placeholder>
+                    <Label text="No recent activity." style="-fx-text-fill: #6a7a6e;"/>
+                </placeholder>
+            </TableView>
+        </VBox>
+    </HBox>
+</VBox>

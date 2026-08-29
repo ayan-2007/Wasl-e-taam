@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.StrategySwitcherController"
+      spacing="20" styleClass="root">
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+    
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Button text="← Back" styleClass="button-secondary" onAction="#handleBack"/>
+        <Label text="Matching Strategy" styleClass="header-label"/>
+    </HBox>
+    
+    <Separator/>
+    
+    <VBox spacing="16" maxWidth="600" style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 8; -fx-border-color: #e0e8e2; -fx-border-radius: 8;">
+        <Label text="Select Matching Algorithm" styleClass="subheader-label"/>
+        
+        <VBox spacing="12">
+            <Label text="Current Strategy:" style="-fx-font-weight: 500;"/>
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <ComboBox fx:id="strategyComboBox" prefWidth="300" promptText="Select strategy" onAction="#handleStrategyChange"/>
+                <Label fx:id="currentStrategyLabel" text="" style="-fx-font-weight: 600; -fx-text-fill: #2d7a3a; -fx-padding: 0 0 0 10;"/>
+            </HBox>
+        </VBox>
+        
+        <Separator/>
+        
+        <Label text="Strategy Descriptions" styleClass="subheader-label"/>
+        <VBox spacing="8">
+            <TitledPane text="Nearest First" expanded="false">
+                <Label text="Matches donations to the geographically closest recipient who can accept the quantity. Minimizes transport time and carbon footprint." wrapText="true" style="-fx-padding: 10; -fx-text-fill: #6a7a6e;"/>
+            </TitledPane>
+            <TitledPane text="Expiry First" expanded="false">
+                <Label text="Prioritizes donations that are expiring soonest. Ensures perishable food is redistributed before it spoils." wrapText="true" style="-fx-padding: 10; -fx-text-fill: #6a7a6e;"/>
+            </TitledPane>
+            <TitledPane text="Capacity Based" expanded="false">
+                <Label text="Matches donations to recipients with the most remaining capacity. Maximizes throughput and utilization of recipient storage." wrapText="true" style="-fx-padding: 10; -fx-text-fill: #6a7a6e;"/>
+            </TitledPane>
+        </VBox>
+    </VBox>
+</VBox>

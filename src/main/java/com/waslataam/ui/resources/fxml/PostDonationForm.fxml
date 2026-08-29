@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.PostDonationFormController"
+            fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+    <VBox spacing="20" styleClass="root">
+        <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+        
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <Button text="← Back" styleClass="button-secondary" onAction="#handleBack"/>
+            <Label text="Post New Donation" styleClass="header-label"/>
+        </HBox>
+        
+        <Separator/>
+        
+        <VBox spacing="16" maxWidth="600">
+            <VBox spacing="8">
+                <Label text="Donation Type *" style="-fx-font-weight: 500;"/>
+                <ComboBox fx:id="typeComboBox" prefWidth="600" promptText="Select donation type" onAction="#handleTypeChange"/>
+            </VBox>
+            
+            <HBox spacing="16">
+                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="Quantity *" style="-fx-font-weight: 500;"/>
+                    <TextField fx:id="quantityField" promptText="e.g., 50" prefWidth="250"/>
+                </VBox>
+                <VBox spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="Unit *" style="-fx-font-weight: 500;"/>
+                    <ComboBox fx:id="unitComboBox" prefWidth="250" promptText="Select unit"/>
+                </VBox>
+            </HBox>
+            
+            <VBox spacing="8">
+                <Label text="Expiry Date & Time *" style="-fx-font-weight: 500;"/>
+                <HBox spacing="12">
+                    <DatePicker fx:id="expiryDatePicker" prefWidth="200" promptText="Select date"/>
+                    <Spinner fx:id="expiryTimeSpinner" prefWidth="150">
+                        <valueFactory>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="23" initial="12"/>
+                        </valueFactory>
+                    </Spinner>
+                    <Label text=":00" style="-fx-padding: 0 0 0 8; -fx-font-size: 14px;"/>
+                </HBox>
+            </VBox>
+            
+            <VBox spacing="8">
+                <Label text="Location *" style="-fx-font-weight: 500;"/>
+                <TextField fx:id="locationField" promptText="Enter address" prefWidth="600"/>
+            </VBox>
+            
+            <!-- Perishable specific fields -->
+            <VBox fx:id="perishableFields" spacing="8" visible="false" managed="false">
+                <Label text="Temperature Requirement *" style="-fx-font-weight: 500;"/>
+                <TextField fx:id="temperatureField" promptText="e.g., 2-8°C (Refrigerated)" prefWidth="600"/>
+            </VBox>
+            
+            <!-- Dry Food specific fields -->
+            <VBox fx:id="dryFoodFields" spacing="8" visible="false" managed="false">
+                <Label text="Shelf Life (Days) *" style="-fx-font-weight: 500;"/>
+                <Spinner fx:id="shelfLifeSpinner" prefWidth="150">
+                    <valueFactory>
+                        <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="3650" initial="365"/>
+                    </valueFactory>
+                </Spinner>
+            </VBox>
+            
+            <!-- Prepared Meal specific fields -->
+            <VBox fx:id="preparedMealFields" spacing="8" visible="false" managed="false">
+                <Label text="Number of Servings *" style="-fx-font-weight: 500;"/>
+                <Spinner fx:id="servingsSpinner" prefWidth="150">
+                    <valueFactory>
+                        <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="10000" initial="50"/>
+                    </valueFactory>
+                </Spinner>
+                <Label text="Cooked At *" style="-fx-font-weight: 500;"/>
+                <DatePicker fx:id="cookedAtPicker" prefWidth="200" promptText="Select date/time"/>
+            </VBox>
+            
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <Button text="Cancel" styleClass="button-secondary" onAction="#handleBack"/>
+                <Button fx:id="submitButton" text="Submit Donation" styleClass="button" defaultButton="true" onAction="#handleSubmit"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</ScrollPane>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.VolunteerDashboardController"
+      spacing="20" styleClass="root">
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+    
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label fx:id="welcomeLabel" text="Volunteer Dashboard" styleClass="header-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <ToggleButton fx:id="availabilityToggle" text="Available" selected="true" onAction="#handleAvailabilityToggle"/>
+    </HBox>
+    
+    <Separator/>
+    
+    <Label text="Assigned Pickups" styleClass="subheader-label"/>
+    
+    <TableView fx:id="pickupsTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="typeColumn" text="Type" prefWidth="150">
+                <cellValueFactory><PropertyValueFactory property="type"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="120">
+                <cellValueFactory><PropertyValueFactory property="quantity"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="statusColumn" text="Status" prefWidth="150">
+                <cellValueFactory><PropertyValueFactory property="status"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="locationColumn" text="Pickup Location" prefWidth="250">
+                <cellValueFactory><PropertyValueFactory property="location"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="recipientColumn" text="Recipient" prefWidth="180">
+                <cellValueFactory><PropertyValueFactory property="donorName"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="actionColumn" text="Action" prefWidth="200">
+                <cellFactory><ButtonTableCellFactory/></cellFactory>
+            </TableColumn>
+        </columns>
+        <placeholder>
+            <Label text="No assigned pickups. You'll be assigned when a donation is claimed." style="-fx-text-fill: #6a7a6e;"/>
+        </placeholder>
+    </TableView>
+</VBox>

@@ -5,10 +5,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,11 +25,21 @@ public class MainShellController {
     @FXML private Button logoutButton;
     @FXML private StackPane contentArea;
 
+    private static MainShellController instance;
     private final SessionContext sessionContext = SessionContext.getInstance();
     private final Map<String, Node> viewCache = new HashMap<>();
 
+    public static MainShellController getInstance() {
+        return instance;
+    }
+
+    public void navigateTo(String fxmlPath, String cacheKey) {
+        loadView(fxmlPath, cacheKey);
+    }
+
     @FXML
     public void initialize() {
+        instance = this;
         setupUserInfo();
         setupNavigation();
         loadDefaultView();

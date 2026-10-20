@@ -51,9 +51,14 @@ public class RecipientDashboardController {
 
     @FXML
     public void initialize() {
+        if (coordinator == null) {
+            coordinator = com.waslataam.Main.getCoordinator();
+        }
         setupAvailableTable();
         setupClaimedTable();
         setupFilters();
+        loadAvailableDonations();
+        loadClaimedDonations();
     }
 
     private void setupAvailableTable() {
@@ -163,7 +168,7 @@ public class RecipientDashboardController {
         });
     }
 
-    private <T> Callback<TableColumn<T, Void>, TableCell<T, Void>> createActionButtonFactory(String buttonText, java.util.function.Consumer<DonationListViewModel.DonationRow> action) {
+    private Callback<TableColumn<DonationListViewModel.DonationRow, Void>, TableCell<DonationListViewModel.DonationRow, Void>> createActionButtonFactory(String buttonText, java.util.function.Consumer<DonationListViewModel.DonationRow> action) {
         return col -> new TableCell<>() {
             private final Button btn = new Button(buttonText);
             {

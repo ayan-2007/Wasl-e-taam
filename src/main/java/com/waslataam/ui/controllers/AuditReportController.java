@@ -4,6 +4,7 @@ import com.waslataam.coordination.DonationCoordinator;
 import com.waslataam.command.AuditTrail;
 import com.waslataam.command.DonationCommand;
 import com.waslataam.domain.DonationStatus;
+import com.waslataam.viewmodel.AuditLogViewModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -38,7 +39,11 @@ public class AuditReportController {
 
     @FXML
     public void initialize() {
+        if (coordinator == null) {
+            coordinator = com.waslataam.Main.getCoordinator();
+        }
         auditTable.setItems(viewModel.getEntries());
+        loadAuditLog();
         
         timestampColumn.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
         actorColumn.setCellValueFactory(new PropertyValueFactory<>("actorId"));
@@ -95,7 +100,9 @@ public class AuditReportController {
 
     @FXML
     private void handleBack() {
-        // Navigation handled by MainShellController
+        if (MainShellController.getInstance() != null) {
+            MainShellController.getInstance().navigateTo("/com/waslataam/ui/resources/fxml/AdminDashboard.fxml", "adminDashboard");
+        }
     }
 
     private void showSuccess(String message) {

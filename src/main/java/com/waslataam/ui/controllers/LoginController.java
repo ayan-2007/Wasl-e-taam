@@ -26,6 +26,7 @@ public class LoginController {
 
     private final UserFactory userFactory = new UserFactory();
     private final SessionContext sessionContext = SessionContext.getInstance();
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LoginController.class);
 
     @FXML
     public void initialize() {
@@ -35,9 +36,11 @@ public class LoginController {
 
     @FXML
     private void handleLogin() {
-        UserRole role = roleComboBox.getValue();
-        String name = nameField.getText().trim();
-        String email = emailField.getText().trim();
+        UserRole role = roleComboBox.getValue() != null ? roleComboBox.getValue() : roleComboBox.getSelectionModel().getSelectedItem();
+        String name = nameField.getText() != null ? nameField.getText().trim() : "";
+        String email = emailField.getText() != null ? emailField.getText().trim() : "";
+
+        log.info("handleLogin called with role={}, name={}, email={}", role, name, email);
 
         if (role == null || name.isEmpty() || email.isEmpty()) {
             showError("Please fill in all fields");
@@ -74,6 +77,7 @@ public class LoginController {
             sessionContext.setCurrentUser(user);
             loadMainShell();
         } catch (Exception e) {
+            log.error("Login failed with exception", e);
             showError("Login failed: " + e.getMessage());
         }
     }
@@ -93,7 +97,8 @@ public class LoginController {
             stage.setScene(new Scene(root, 1200, 800));
             stage.setTitle("Wasl-e-Ta'am - " + sessionContext.getCurrentUser().getName());
             stage.show();
-        } catch (IOException e) {
+        } catch (Exception e) {
+            log.error("Failed to load main shell", e);
             showError("Failed to load main shell: " + e.getMessage());
         }
     }

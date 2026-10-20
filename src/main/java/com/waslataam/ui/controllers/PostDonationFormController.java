@@ -7,6 +7,8 @@ import com.waslataam.factory.DonationParams;
 import com.waslataam.viewmodel.SessionContext;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.time.LocalDateTime;
@@ -39,9 +41,9 @@ public class PostDonationFormController {
         unitComboBox.setValue("kg");
 
         // Initialize spinners
-        expiryTimeSpinner.setValueFactory(new javafx.util.converter.IntegerStringConverter());
-        shelfLifeSpinner.setValueFactory(new javafx.util.converter.IntegerStringConverter());
-        servingsSpinner.setValueFactory(new javafx.util.converter.IntegerStringConverter());
+        expiryTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
+        shelfLifeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 365, 1));
+        servingsSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 1));
     }
 
     @FXML
@@ -75,8 +77,10 @@ public class PostDonationFormController {
 
         try {
             DonationParams params = buildParams();
-            // The actual donation creation is handled by the coordinator
-            // For now, we'll show success and navigate back
+            com.waslataam.coordination.DonationCoordinator coordinator = com.waslataam.Main.getCoordinator();
+            if (coordinator != null) {
+                coordinator.postDonation(params);
+            }
             showSuccess("Donation submitted successfully! It will be reviewed and posted shortly.");
             handleBack();
         } catch (Exception e) {
@@ -150,7 +154,9 @@ public class PostDonationFormController {
 
     @FXML
     private void handleBack() {
-        // Navigation handled by MainShellController
+        if (MainShellController.getInstance() != null) {
+            MainShellController.getInstance().navigateTo("/com/waslataam/ui/resources/fxml/DonorDashboard.fxml", "donorDashboard");
+        }
     }
 
     private void showSuccess(String message) {
@@ -158,7 +164,7 @@ public class PostDonationFormController {
         alert.setTitle("Success");
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.showAndWait();
+        alert.show();
     }
 
     private void showError(String message) {
@@ -166,6 +172,6 @@ public class PostDonationFormController {
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.showAndWait();
+        alert.show();
     }
 }

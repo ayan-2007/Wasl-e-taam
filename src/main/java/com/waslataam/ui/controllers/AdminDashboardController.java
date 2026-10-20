@@ -4,6 +4,7 @@ import com.waslataam.coordination.DonationCoordinator;
 import com.waslataam.domain.Donation;
 import com.waslataam.domain.DonationStatus;
 import com.waslataam.viewmodel.SessionContext;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -30,7 +31,11 @@ public class AdminDashboardController {
 
     @FXML
     public void initialize() {
+        if (coordinator == null) {
+            coordinator = com.waslataam.Main.getCoordinator();
+        }
         setupActivityTable();
+        refresh();
     }
 
     private void setupActivityTable() {
@@ -84,7 +89,7 @@ public class AdminDashboardController {
 
     private void updateActivityTable() {
         var auditEntries = coordinator.getAuditTrail().getEntries();
-        var items = FXCollections.observableArrayList();
+        var items = FXCollections.<ActivityRow>observableArrayList();
         
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
         

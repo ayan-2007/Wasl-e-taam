@@ -6,6 +6,7 @@ import com.waslataam.domain.DonationStatus;
 import com.waslataam.domain.Donor;
 import com.waslataam.domain.Recipient;
 import com.waslataam.viewmodel.DashboardViewModel;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -13,6 +14,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class ImpactDashboardController {
@@ -107,8 +110,8 @@ public class ImpactDashboardController {
                         )
                 ));
 
-        var donorItems = FXCollections.observableArrayList();
-        int rank = 1;
+        var donorItems = FXCollections.<TopEntityRow>observableArrayList();
+        AtomicInteger donorRank = new AtomicInteger(1);
         for (var entry : donorStats.entrySet()
                 .stream()
                 .sorted(Map.Entry.<UUID, DonorStats>comparingByValue(Comparator.comparingDouble(ds -> -ds.totalKg)))
@@ -118,7 +121,7 @@ public class ImpactDashboardController {
             coordinator.getUserRepository().findById(entry.getKey()).ifPresent(user -> {
                 if (user instanceof Donor donor) {
                     donorItems.add(new TopEntityRow(
-                            rank++, donor.getName(), entry.getValue().count, entry.getValue().totalKg
+                            donorRank.getAndIncrement(), donor.getName(), entry.getValue().count, entry.getValue().totalKg
                     ));
                 }
             });
@@ -139,8 +142,8 @@ public class ImpactDashboardController {
                         )
                 ));
 
-        var recipientItems = FXCollections.observableArrayList();
-        rank = 1;
+        var recipientItems = FXCollections.<TopEntityRow>observableArrayList();
+        AtomicInteger recipientRank = new AtomicInteger(1);
         for (var entry : recipientStats.entrySet()
                 .stream()
                 .sorted(Map.Entry.<UUID, RecipientStats>comparingByValue(Comparator.comparingDouble(rs -> -rs.totalKg)))
@@ -150,7 +153,7 @@ public class ImpactDashboardController {
             coordinator.getUserRepository().findById(entry.getKey()).ifPresent(user -> {
                 if (user instanceof Recipient recipient) {
                     recipientItems.add(new TopEntityRow(
-                            rank++, recipient.getName(), entry.getValue().count, entry.getValue().totalKg
+                            recipientRank.getAndIncrement(), recipient.getName(), entry.getValue().count, entry.getValue().totalKg
                     ));
                 }
             });

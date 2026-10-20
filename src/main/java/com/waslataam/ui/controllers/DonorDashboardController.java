@@ -36,6 +36,9 @@ public class DonorDashboardController {
     public void initialize() {
         setupTable();
         donationsTable.setItems(viewModel.getDonations());
+        if (coordinator == null) {
+            setCoordinator(com.waslataam.Main.getCoordinator());
+        }
     }
 
     private void setupTable() {
@@ -90,7 +93,9 @@ public class DonorDashboardController {
 
     @FXML
     private void handlePostDonation() {
-        // Navigation handled by MainShellController
+        if (MainShellController.getInstance() != null) {
+            MainShellController.getInstance().navigateTo("/com/waslataam/ui/resources/fxml/PostDonationForm.fxml", "postDonation");
+        }
     }
 
     public void refresh() {

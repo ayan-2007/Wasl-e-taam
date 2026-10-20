@@ -25,7 +25,10 @@ public class StrategySwitcherController {
 
     @FXML
     public void initialize() {
-        // Will be populated when coordinator is set
+        if (coordinator == null) {
+            coordinator = com.waslataam.Main.getCoordinator();
+        }
+        initializeStrategies();
     }
 
     private void initializeStrategies() {

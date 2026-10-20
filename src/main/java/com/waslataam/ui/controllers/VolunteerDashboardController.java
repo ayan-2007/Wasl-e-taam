@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
 import java.util.List;
@@ -39,8 +40,12 @@ public class VolunteerDashboardController {
 
     @FXML
     public void initialize() {
+        if (coordinator == null) {
+            coordinator = com.waslataam.Main.getCoordinator();
+        }
         setupTable();
         pickupsTable.setItems(viewModel.getDonations());
+        loadPickups();
         
         // Set initial availability
         var user = sessionContext.getCurrentUser();

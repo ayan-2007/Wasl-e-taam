@@ -31,8 +31,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Main extends Application {
+    private static DonationCoordinator staticCoordinator;
     private DonationCoordinator coordinator;
     private ExpiryWatcher expiryWatcher;
+
+    public static DonationCoordinator getCoordinator() {
+        return staticCoordinator;
+    }
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -96,6 +101,7 @@ public class Main extends Application {
                 auditTrail,
                 matchingEngine
         );
+        staticCoordinator = coordinator;
 
         // Register observers
         coordinator.addObserver(recipientNotifier);
@@ -116,7 +122,11 @@ public class Main extends Application {
         if (expiryWatcher != null) {
             expiryWatcher.stop();
         }
-        super.stop();
+        try {
+            super.stop();
+        } catch (Exception e) {
+            // Ignore exception during shutdown
+        }
     }
 
     public static void main(String[] args) {

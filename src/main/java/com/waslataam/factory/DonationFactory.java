@@ -32,7 +32,8 @@ public class DonationFactory {
                 params.getUnit(),
                 params.getDonorId(),
                 params.getExpiryTime(),
-                params.getTemperatureRequirement()
+                params.getTemperatureRequirement(),
+                params.getLocation()
         );
     }
 
@@ -45,7 +46,8 @@ public class DonationFactory {
                 params.getQuantity(),
                 params.getUnit(),
                 params.getDonorId(),
-                params.getShelfLifeDays()
+                params.getShelfLifeDays(),
+                params.getLocation()
         );
     }
 
@@ -62,7 +64,8 @@ public class DonationFactory {
                 params.getUnit(),
                 params.getDonorId(),
                 params.getServings(),
-                params.getCookedAt()
+                params.getCookedAt(),
+                params.getLocation()
         );
     }
 }

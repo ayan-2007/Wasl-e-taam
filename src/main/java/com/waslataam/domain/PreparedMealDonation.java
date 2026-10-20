@@ -9,8 +9,8 @@ public class PreparedMealDonation extends Donation {
     private final LocalDateTime expiryTime;
 
     public PreparedMealDonation(UUID id, double quantity, String unit, UUID donorId,
-                                int servings, LocalDateTime cookedAt) {
-        super(id, DonationType.PREPARED_MEAL, quantity, unit, donorId);
+                                int servings, LocalDateTime cookedAt, Location location) {
+        super(id, DonationType.PREPARED_MEAL, quantity, unit, donorId, location);
         if (servings <= 0) {
             throw new IllegalArgumentException("Servings must be positive");
         }
@@ -21,6 +21,11 @@ public class PreparedMealDonation extends Donation {
         this.cookedAt = cookedAt;
         // Prepared meals expire in 4 hours from cooking
         this.expiryTime = cookedAt.plusHours(4);
+    }
+
+    public PreparedMealDonation(UUID id, double quantity, String unit, UUID donorId,
+                                int servings, LocalDateTime cookedAt) {
+        this(id, quantity, unit, donorId, servings, cookedAt, null);
     }
 
     @Override

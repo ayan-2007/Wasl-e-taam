@@ -8,13 +8,18 @@ public class PerishableDonation extends Donation {
     private final String temperatureRequirement;
 
     public PerishableDonation(UUID id, double quantity, String unit, UUID donorId,
-                              LocalDateTime expiryTime, String temperatureRequirement) {
-        super(id, DonationType.PERISHABLE, quantity, unit, donorId);
-        if (expiryTime == null || expiryTime.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Expiry time must be in the future");
+                              LocalDateTime expiryTime, String temperatureRequirement, Location location) {
+        super(id, DonationType.PERISHABLE, quantity, unit, donorId, location);
+        if (expiryTime == null) {
+            throw new IllegalArgumentException("Expiry time cannot be null");
         }
         this.expiryTime = expiryTime;
         this.temperatureRequirement = temperatureRequirement;
+    }
+
+    public PerishableDonation(UUID id, double quantity, String unit, UUID donorId,
+                              LocalDateTime expiryTime, String temperatureRequirement) {
+        this(id, quantity, unit, donorId, expiryTime, temperatureRequirement, null);
     }
 
     @Override

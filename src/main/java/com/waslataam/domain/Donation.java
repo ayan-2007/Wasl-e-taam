@@ -1,5 +1,7 @@
 package com.waslataam.domain;
 
+import com.waslataam.state.DonationState;
+import com.waslataam.state.PendingReviewState;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -15,13 +17,15 @@ public abstract class Donation {
     private final LocalDateTime postedAt;
     private LocalDateTime updatedAt;
     private DonationState state;
+    private Location location;
 
-    protected Donation(UUID id, DonationType type, double quantity, String unit, UUID donorId) {
+    protected Donation(UUID id, DonationType type, double quantity, String unit, UUID donorId, Location location) {
         this.id = id;
         this.type = type;
         this.quantity = quantity;
         this.unit = unit;
         this.donorId = donorId;
+        this.location = location;
         this.postedAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.state = new PendingReviewState();
@@ -62,6 +66,15 @@ public abstract class Donation {
 
     public void setVolunteerId(UUID volunteerId) {
         this.volunteerId = volunteerId;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
         this.updatedAt = LocalDateTime.now();
     }
 

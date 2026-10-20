@@ -4,6 +4,8 @@ import com.waslataam.domain.Donation;
 import com.waslataam.domain.DonationStatus;
 import com.waslataam.domain.exceptions.IllegalStateTransitionException;
 
+import java.util.UUID;
+
 public class ClaimedState implements DonationState {
     @Override
     public DonationStatus getStatus() {

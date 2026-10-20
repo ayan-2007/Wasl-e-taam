@@ -49,7 +49,7 @@ class InMemoryDonationRepoTest {
         d2.setState(new com.waslataam.state.AvailableState());
         
         Donation d3 = new PerishableDonation(UUID.randomUUID(), 30.0, "kg", donorId, LocalDateTime.now().plusDays(1), "2-8°C");
-        d3.setState(new com.waslataam.state.ClaimedState());
+        d3.setState(new com.waslataam.state.AvailableState());
         d3.claim(recipientId);
         
         repo.save(d1);
@@ -85,7 +85,7 @@ class InMemoryDonationRepoTest {
         d1.setState(new com.waslataam.state.AvailableState());
         
         Donation d2 = new PerishableDonation(UUID.randomUUID(), 20.0, "kg", donorId, LocalDateTime.now().plusDays(1), "2-8°C");
-        d2.setState(new com.waslataam.state.ClaimedState());
+        d2.setState(new com.waslataam.state.AvailableState());
         d2.claim(recipientId);
         
         repo.save(d1);
@@ -110,7 +110,7 @@ class InMemoryDonationRepoTest {
         donation.setState(new com.waslataam.state.AvailableState());
         repo.save(donation);
         
-        donation.setState(new com.waslataam.state.ClaimedState());
+        donation.setState(new com.waslataam.state.AvailableState());
         donation.claim(recipientId);
         repo.update(donation);
         

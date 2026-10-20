@@ -36,6 +36,7 @@ class ObserverTest {
 
     @Test
     void testAuditLoggerRecordsDonationPosted() {
+        donation.setState(new com.waslataam.state.AvailableState());
         SystemEvent event = new SystemEvent(
                 SystemEvent.Type.DONATION_POSTED, donation, donorId, "DONOR", DonationStatus.PENDING_REVIEW
         );
@@ -52,6 +53,7 @@ class ObserverTest {
     @Test
     void testAuditLoggerRecordsClaim() {
         donation.setState(new com.waslataam.state.AvailableState());
+        donation.claim(recipientId);
         
         SystemEvent event = new SystemEvent(
                 SystemEvent.Type.DONATION_CLAIMED, donation, recipientId, "RECIPIENT", DonationStatus.AVAILABLE
@@ -71,6 +73,7 @@ class ObserverTest {
         donation.setState(new com.waslataam.state.AvailableState());
         donation.claim(recipientId);
         donation.pickUp(UUID.randomUUID());
+        donation.deliver();
         
         SystemEvent event = new SystemEvent(
                 SystemEvent.Type.DONATION_DELIVERED, donation, UUID.randomUUID(), "VOLUNTEER", DonationStatus.IN_TRANSIT

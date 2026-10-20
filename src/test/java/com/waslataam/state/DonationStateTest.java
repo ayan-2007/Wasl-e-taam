@@ -3,6 +3,7 @@ package com.waslataam.state;
 import com.waslataam.domain.Donation;
 import com.waslataam.domain.DonationStatus;
 import com.waslataam.domain.DonationType;
+import com.waslataam.domain.PerishableDonation;
 import com.waslataam.domain.exceptions.IllegalStateTransitionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;

@@ -20,33 +20,38 @@ class LoginViewTest {
     @Test
     void testLoginViewLoads(FxRobot robot) {
         // Verify login view elements are present
-        robot.lookup(".label").queryAll().stream()
-                .filter(l -> l.getText().contains("Wasl-e-Ta'am"))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Logo not found"));
+        boolean logoFound = robot.lookup(".label").queryAll().stream()
+                .filter(javafx.scene.control.Label.class::isInstance)
+                .map(javafx.scene.control.Label.class::cast)
+                .anyMatch(l -> l.getText() != null && l.getText().contains("Wasl-e-Ta'am"));
+        org.junit.jupiter.api.Assertions.assertTrue(logoFound, "Logo not found");
         
-        robot.lookup("#roleComboBox").queryAs(javafx.scene.control.ComboBox.class)
-                .orElseThrow(() -> new AssertionError("Role combo box not found"));
-        
-        robot.lookup("#nameField").queryAs(javafx.scene.control.TextField.class)
-                .orElseThrow(() -> new AssertionError("Name field not found"));
-        
-        robot.lookup("#emailField").queryAs(javafx.scene.control.TextField.class)
-                .orElseThrow(() -> new AssertionError("Email field not found"));
-        
-        robot.lookup("#loginButton").queryAs(javafx.scene.control.Button.class)
-                .orElseThrow(() -> new AssertionError("Login button not found"));
+        org.junit.jupiter.api.Assertions.assertNotNull(robot.lookup("#roleComboBox").queryAs(javafx.scene.control.ComboBox.class));
+        org.junit.jupiter.api.Assertions.assertNotNull(robot.lookup("#nameField").queryAs(javafx.scene.control.TextField.class));
+        org.junit.jupiter.api.Assertions.assertNotNull(robot.lookup("#emailField").queryAs(javafx.scene.control.TextField.class));
+        org.junit.jupiter.api.Assertions.assertNotNull(robot.lookup("#loginButton").queryAs(javafx.scene.control.Button.class));
     }
 
     @Test
     void testLoginWithDonorRole(FxRobot robot) {
-        robot.clickOn("#roleComboBox");
-        robot.clickOn("Donor");
-        robot.clickOn("#nameField").write("Test Donor");
-        robot.clickOn("#emailField").write("donor@test.com");
-        robot.clickOn("#loginButton");
+        javafx.scene.control.ComboBox<com.waslataam.domain.UserRole> roleCombo = 
+                robot.lookup("#roleComboBox").queryAs(javafx.scene.control.ComboBox.class);
+        javafx.scene.control.TextField nameField = 
+                robot.lookup("#nameField").queryAs(javafx.scene.control.TextField.class);
+        javafx.scene.control.TextField emailField = 
+                robot.lookup("#emailField").queryAs(javafx.scene.control.TextField.class);
+        javafx.scene.control.Button loginButton = 
+                robot.lookup("#loginButton").queryAs(javafx.scene.control.Button.class);
+
+        robot.interact(() -> {
+            roleCombo.setValue(com.waslataam.domain.UserRole.DONOR);
+            roleCombo.getSelectionModel().select(com.waslataam.domain.UserRole.DONOR);
+            nameField.setText("Test Donor");
+            emailField.setText("donor@test.com");
+            loginButton.fire();
+        });
         
         // Should load MainShell
-        robot.lookup("#sidebar").query().orElseThrow(() -> new AssertionError("Sidebar not loaded"));
+        org.junit.jupiter.api.Assertions.assertNotNull(robot.lookup("#sidebar").query());
     }
 }

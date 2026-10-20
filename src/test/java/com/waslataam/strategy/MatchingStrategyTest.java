@@ -3,6 +3,7 @@ package com.waslataam.strategy;
 import com.waslataam.domain.Donation;
 import com.waslataam.domain.DonationType;
 import com.waslataam.domain.Location;
+import com.waslataam.domain.PerishableDonation;
 import com.waslataam.domain.Recipient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;

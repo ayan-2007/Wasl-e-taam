@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.ImpactDashboardController"
+      spacing="20" styleClass="root">
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+    
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Button text="← Back" styleClass="button-secondary" onAction="#handleBack"/>
+        <Label text="Impact Dashboard" styleClass="header-label"/>
+    </HBox>
+    
+    <Separator/>
+    
+    <HBox spacing="20" styleClass="stat-row">
+        <VBox fx:id="kgSavedCard" styleClass="stat-card stat-card-green" prefWidth="200" HBox.hgrow="ALWAYS">
+            <Label text="Food Saved (kg)" styleClass="label-text"/>
+            <Label fx:id="kgSavedValue" text="0.0" styleClass="value-label"/>
+        </VBox>
+        <VBox fx:id="mealsServedCard" styleClass="stat-card stat-card-gold" prefWidth="200" HBox.hgrow="ALWAYS">
+            <Label text="Meals Served" styleClass="label-text"/>
+            <Label fx:id="mealsServedValue" text="0" styleClass="value-label"/>
+        </VBox>
+        <VBox fx:id="co2AvoidedCard" styleClass="stat-card stat-card-blue" prefWidth="200" HBox.hgrow="ALWAYS">
+            <Label text="CO₂ Avoided (kg)" styleClass="label-text"/>
+            <Label fx:id="co2AvoidedValue" text="0.0" styleClass="value-label"/>
+        </VBox>
+        <VBox fx:id="activeDonationsCard" styleClass="stat-card stat-card-orange" prefWidth="200" HBox.hgrow="ALWAYS">
+            <Label text="Active Donations" styleClass="label-text"/>
+            <Label fx:id="activeDonationsValue" text="0" styleClass="value-label"/>
+        </VBox>
+    </HBox>
+    
+    <Separator/>
+    
+    <HBox spacing="20">
+        <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e0e8e2; -fx-border-radius: 8;">
+            <Label text="Top Donors" styleClass="card-title"/>
+            <TableView fx:id="topDonorsTable" prefHeight="300">
+                <columns>
+                    <TableColumn text="Rank" prefWidth="60">
+                        <cellValueFactory><PropertyValueFactory property="rank"/></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Donor" prefWidth="200">
+                        <cellValueFactory><PropertyValueFactory property="name"/></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Donations" prefWidth="100">
+                        <cellValueFactory><PropertyValueFactory property="count"/></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Total kg" prefWidth="100">
+                        <cellValueFactory><PropertyValueFactory property="totalKg"/></cellValueFactory>
+                    </TableColumn>
+                </columns>
+                <placeholder>
+                    <Label text="No donor data yet." style="-fx-text-fill: #6a7a6e;"/>
+                </placeholder>
+            </TableView>
+        </VBox>
+        
+        <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e0e8e2; -fx-border-radius: 8;">
+            <Label text="Top Recipients" styleClass="card-title"/>
+            <TableView fx:id="topRecipientsTable" prefHeight="300">
+                <columns>
+                    <TableColumn text="Rank" prefWidth="60">
+                        <cellValueFactory><PropertyValueFactory property="rank"/></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Recipient" prefWidth="200">
+                        <cellValueFactory><PropertyValueFactory property="name"/></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Claims" prefWidth="100">
+                        <cellValueFactory><PropertyValueFactory property="count"/></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Total kg" prefWidth="100">
+                        <cellValueFactory><PropertyValueFactory property="totalKg"/></cellValueFactory>
+                    </TableColumn>
+                </columns>
+                <placeholder>
+                    <Label text="No recipient data yet." style="-fx-text-fill: #6a7a6e;"/>
+                </placeholder>
+            </TableView>
+        </VBox>
+    </HBox>
+</VBox>

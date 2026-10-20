@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+
+<TabPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.RecipientDashboardController"
+         tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+    <tabs>
+        <Tab text="Available Donations">
+            <fx:include source="AvailableDonationsView.fxml"/>
+        </Tab>
+        <Tab text="My Claims">
+            <VBox spacing="20" styleClass="root">
+                <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="My Claimed Donations" styleClass="header-label"/>
+                </HBox>
+                <Separator/>
+                <TableView fx:id="claimedTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="cTypeColumn" text="Type" prefWidth="150">
+                            <cellValueFactory><PropertyValueFactory property="type"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="cQuantityColumn" text="Quantity" prefWidth="120">
+                            <cellValueFactory><PropertyValueFactory property="quantity"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="cStatusColumn" text="Status" prefWidth="150">
+                            <cellValueFactory><PropertyValueFactory property="status"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="cExpiryColumn" text="Expiry" prefWidth="180">
+                            <cellValueFactory><PropertyValueFactory property="expiryTime"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="cActionColumn" text="Action" prefWidth="150"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="No claimed donations." style="-fx-text-fill: #6a7a6e;"/>
+                    </placeholder>
+                </TableView>
+            </VBox>
+        </Tab>
+    </tabs>
+</TabPane>

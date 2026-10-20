@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.MainShellController">
+    <left>
+        <VBox fx:id="sidebar" id="sidebar" styleClass="sidebar" spacing="0">
+            <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+            <Label fx:id="logoLabel" text="Wasl-e-Ta'am" styleClass="logo-label"/>
+            <Label fx:id="userInfoLabel" text="" styleClass="role-label"/>
+            <Separator style="-fx-background-color: #3a503e;"/>
+            <VBox fx:id="navButtons" spacing="4">
+    <padding><Insets top="10" right="0" bottom="10" left="0"/></padding>
+</VBox>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button fx:id="logoutButton" text="Logout" styleClass="button" maxWidth="Infinity" 
+                    onAction="#handleLogout" style="-fx-background-color: transparent; -fx-text-fill: #c0392b; -fx-border-color: #c0392b; -fx-border-width: 1; -fx-border-radius: 4; -fx-background-radius: 4; -fx-margin: 10;"/>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentArea" style="-fx-background-color: #f4f7f2;"/>
+    </center>
+</BorderPane>

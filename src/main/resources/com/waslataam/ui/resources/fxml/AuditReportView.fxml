@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.AuditReportController"
+      spacing="20" styleClass="root">
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+    
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Button text="← Back" styleClass="button-secondary" onAction="#handleBack"/>
+        <Label text="Audit Report" styleClass="header-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="undoButton" text="↩ Undo Last Action" styleClass="button button-danger" onAction="#handleUndo" disable="true"/>
+    </HBox>
+    
+    <Separator/>
+    
+    <VBox spacing="16" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e0e8e2; -fx-border-radius: 8;">
+        <Label text="Filters" styleClass="card-title"/>
+        <HBox spacing="16">
+            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                <Label text="From Date"/>
+                <DatePicker fx:id="fromDatePicker" prefWidth="200" onAction="#handleFilterChange"/>
+            </VBox>
+            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                <Label text="To Date"/>
+                <DatePicker fx:id="toDatePicker" prefWidth="200" onAction="#handleFilterChange"/>
+            </VBox>
+            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                <Label text="Actor (ID or Role)"/>
+                <TextField fx:id="actorFilterField" prefWidth="200" promptText="Filter by actor" onAction="#handleFilterChange"/>
+            </VBox>
+            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                <Label text="Action Type"/>
+                <ComboBox fx:id="actionFilterComboBox" prefWidth="200" promptText="All Actions" onAction="#handleFilterChange"/>
+            </VBox>
+        </HBox>
+    </VBox>
+    
+    <TableView fx:id="auditTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="timestampColumn" text="Timestamp" prefWidth="180">
+                <cellValueFactory><PropertyValueFactory property="timestamp"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="actorColumn" text="Actor" prefWidth="120">
+                <cellValueFactory><PropertyValueFactory property="actorId"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="roleColumn" text="Role" prefWidth="100">
+                <cellValueFactory><PropertyValueFactory property="actorRole"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="actionColumn" text="Action" prefWidth="180">
+                <cellValueFactory><PropertyValueFactory property="action"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="donationColumn" text="Donation ID" prefWidth="180">
+                <cellValueFactory><PropertyValueFactory property="donationId"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="prevStatusColumn" text="Previous Status" prefWidth="140">
+                <cellValueFactory><PropertyValueFactory property="previousStatus"/></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="newStatusColumn" text="New Status" prefWidth="140">
+                <cellValueFactory><PropertyValueFactory property="newStatus"/></cellValueFactory>
+            </TableColumn>
+        </columns>
+        <placeholder>
+            <Label text="No audit entries found." style="-fx-text-fill: #6a7a6e;"/>
+        </placeholder>
+    </TableView>
+</VBox>

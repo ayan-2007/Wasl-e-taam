@@ -15,7 +15,7 @@ public class AuditLogger implements SystemObserver {
     @Override
     public void onDonationPosted(SystemEvent event) {
         auditTrail.log(event.getActorId(), event.getActorRole(), "POST_DONATION",
-                event.getDonation().getId(), null, event.getCurrentStatus());
+                event.getDonation().getId(), event.getPreviousStatus(), event.getCurrentStatus());
         log.debug("AUDIT: Donation posted - {}", event.getDonation().getId());
     }
 

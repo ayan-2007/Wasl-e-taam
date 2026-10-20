@@ -47,6 +47,13 @@ public class InMemoryDonationRepo implements DonationRepository {
     }
 
     @Override
+    public List<Donation> findByVolunteerId(UUID volunteerId) {
+        return donations.values().stream()
+                .filter(d -> d.getVolunteerId() != null && d.getVolunteerId().equals(volunteerId))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<Donation> findAll() {
         return new ArrayList<>(donations.values());
     }

@@ -13,6 +13,7 @@ public interface DonationRepository {
     List<Donation> findByStatus(DonationStatus status);
     List<Donation> findByDonorId(UUID donorId);
     List<Donation> findByRecipientId(UUID recipientId);
+    List<Donation> findByVolunteerId(UUID volunteerId);
     List<Donation> findAll();
     void delete(UUID id);
     void update(Donation donation);

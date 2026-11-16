@@ -64,6 +64,8 @@ public class StrategySwitcherController {
 
     @FXML
     private void handleBack() {
-        // Navigation handled by MainShellController
+        if (MainShellController.getInstance() != null) {
+            MainShellController.getInstance().navigateTo("/com/waslataam/ui/resources/fxml/AdminDashboard.fxml", "adminDashboard");
+        }
     }
 }

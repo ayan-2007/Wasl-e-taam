@@ -2,68 +2,101 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.TextAlignment?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.AdminDashboardController"
-      spacing="20" styleClass="root">
-    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
-    
-    <HBox alignment="CENTER_LEFT" spacing="15">
-        <Label fx:id="welcomeLabel" text="Admin Dashboard" styleClass="header-label"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button text="Refresh" styleClass="button-secondary" onAction="#handleRefresh"/>
-    </HBox>
-    
-    <Separator/>
-    
-    <HBox spacing="20" styleClass="stat-row">
-        <VBox fx:id="totalDonationsCard" styleClass="stat-card stat-card-green" prefWidth="200" HBox.hgrow="ALWAYS">
-            <Label text="Total Donations" styleClass="label-text"/>
-            <Label fx:id="totalDonationsValue" text="0" styleClass="value-label"/>
+      styleClass="page" spacing="24">
+    <padding><Insets top="40" right="48" bottom="40" left="48"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <Label fx:id="welcomeLabel" text="Operations overview" styleClass="page-title"/>
+            <Label text="The network at a glance, plus the latest actions across the platform."
+                   styleClass="page-subtitle" wrapText="true" maxWidth="640"/>
         </VBox>
-        <VBox fx:id="activeDonationsCard" styleClass="stat-card stat-card-blue" prefWidth="200" HBox.hgrow="ALWAYS">
-            <Label text="Active Donations" styleClass="label-text"/>
-            <Label fx:id="activeDonationsValue" text="0" styleClass="value-label"/>
-        </VBox>
-        <VBox fx:id="deliveredCard" styleClass="stat-card stat-card-gold" prefWidth="200" HBox.hgrow="ALWAYS">
-            <Label text="Delivered" styleClass="label-text"/>
-            <Label fx:id="deliveredValue" text="0" styleClass="value-label"/>
-        </VBox>
-        <VBox fx:id="expiredCard" styleClass="stat-card stat-card-orange" prefWidth="200" HBox.hgrow="ALWAYS">
-            <Label text="Expired" styleClass="label-text"/>
-            <Label fx:id="expiredValue" text="0" styleClass="value-label"/>
+        <VBox alignment="CENTER_RIGHT" spacing="4">
+            <Button text="Refresh" styleClass="button-secondary" onAction="#handleRefresh"/>
+            <Label fx:id="lastUpdatedLabel" text="Updated just now" styleClass="caption"/>
         </VBox>
     </HBox>
-    
-    <Separator/>
-    
-    <HBox spacing="20">
-        <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e0e8e2; -fx-border-radius: 8;">
-            <Label text="Quick Actions" styleClass="card-title"/>
-            <Button text="Manage Matching Strategy" styleClass="button" maxWidth="Infinity" onAction="#handleStrategySwitcher"/>
-            <Button text="View Audit Report" styleClass="button" maxWidth="Infinity" onAction="#handleAuditReport"/>
-            <Button text="View Impact Dashboard" styleClass="button" maxWidth="Infinity" onAction="#handleImpactDashboard"/>
+
+    <HBox styleClass="metric-band">
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Total donations" styleClass="stat-label"/>
+            <Label fx:id="totalDonationsValue" text="0" styleClass="stat-value"/>
         </VBox>
-        
-        <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e0e8e2; -fx-border-radius: 8;">
-            <Label text="Recent Activity" styleClass="card-title"/>
-            <TableView fx:id="recentActivityTable" prefHeight="200">
+        <Region styleClass="metric-divider" maxHeight="Infinity"/>
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Active now" styleClass="stat-label"/>
+            <Label fx:id="activeDonationsValue" text="0" styleClass="stat-value"/>
+        </VBox>
+        <Region styleClass="metric-divider" maxHeight="Infinity"/>
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Delivered" styleClass="stat-label"/>
+            <Label fx:id="deliveredValue" text="0" styleClass="stat-value stat-value-accent"/>
+        </VBox>
+        <Region styleClass="metric-divider" maxHeight="Infinity"/>
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Expired" styleClass="stat-label"/>
+            <Label fx:id="expiredValue" text="0" styleClass="stat-value"/>
+        </VBox>
+    </HBox>
+
+    <HBox spacing="24" VBox.vgrow="ALWAYS">
+        <VBox styleClass="card" spacing="16" HBox.hgrow="ALWAYS">
+            <VBox spacing="2">
+                <Label text="Recent activity" styleClass="section-title"/>
+                <Label text="The last twenty recorded actions, newest last." styleClass="section-hint"/>
+            </VBox>
+            <TableView fx:id="recentActivityTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn text="Time" prefWidth="120">
-                        <cellValueFactory><PropertyValueFactory property="timestamp"/></cellValueFactory>
-                    </TableColumn>
-                    <TableColumn text="Action" prefWidth="200">
-                        <cellValueFactory><PropertyValueFactory property="action"/></cellValueFactory>
-                    </TableColumn>
-                    <TableColumn text="Actor" prefWidth="150">
-                        <cellValueFactory><PropertyValueFactory property="actor"/></cellValueFactory>
-                    </TableColumn>
+                    <TableColumn text="Time" prefWidth="130"/>
+                    <TableColumn text="Action" prefWidth="240"/>
+                    <TableColumn text="Actor" prefWidth="200"/>
                 </columns>
                 <placeholder>
-                    <Label text="No recent activity." style="-fx-text-fill: #6a7a6e;"/>
+                    <VBox alignment="CENTER" spacing="4">
+                        <Label text="No activity yet" styleClass="empty-title"/>
+                        <Label text="Post or claim a donation and the audit trail will start filling in here."
+                               styleClass="empty-body" wrapText="true" maxWidth="360" textAlignment="CENTER"/>
+                    </VBox>
                 </placeholder>
             </TableView>
+        </VBox>
+
+        <VBox styleClass="card" spacing="4" prefWidth="300" minWidth="280" maxWidth="320" HBox.hgrow="NEVER">
+            <VBox spacing="2">
+                <Label text="Go deeper" styleClass="section-title"/>
+                <Label text="Three places to inspect or change how the network behaves." styleClass="section-hint" wrapText="true"/>
+            </VBox>
+
+            <Button styleClass="link-card" maxWidth="Infinity" accessibleText="Open matching strategy" onAction="#handleStrategySwitcher">
+                <graphic>
+                    <VBox spacing="2" alignment="CENTER_LEFT">
+                        <Label text="Matching strategy" styleClass="link-card-title"/>
+                        <Label text="Choose how new donations find a recipient." styleClass="link-card-body" wrapText="true"/>
+                    </VBox>
+                </graphic>
+            </Button>
+
+            <Button styleClass="link-card" maxWidth="Infinity" accessibleText="Open audit report" onAction="#handleAuditReport">
+                <graphic>
+                    <VBox spacing="2" alignment="CENTER_LEFT">
+                        <Label text="Audit report" styleClass="link-card-title"/>
+                        <Label text="Trace every state change and undo the latest action." styleClass="link-card-body" wrapText="true"/>
+                    </VBox>
+                </graphic>
+            </Button>
+
+            <Button styleClass="link-card" maxWidth="Infinity" accessibleText="Open impact dashboard" onAction="#handleImpactDashboard">
+                <graphic>
+                    <VBox spacing="2" alignment="CENTER_LEFT">
+                        <Label text="Impact dashboard" styleClass="link-card-title"/>
+                        <Label text="See meals served, food saved and CO₂ avoided." styleClass="link-card-body" wrapText="true"/>
+                    </VBox>
+                </graphic>
+            </Button>
         </VBox>
     </HBox>
 </VBox>

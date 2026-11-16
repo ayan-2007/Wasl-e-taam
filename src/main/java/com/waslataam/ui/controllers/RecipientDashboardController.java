@@ -55,7 +55,9 @@ public class RecipientDashboardController {
             coordinator = com.waslataam.Main.getCoordinator();
         }
         setupAvailableTable();
-        setupClaimedTable();
+        if (claimedTable != null) {
+            setupClaimedTable();
+        }
         setupFilters();
         loadAvailableDonations();
         loadClaimedDonations();
@@ -90,19 +92,29 @@ public class RecipientDashboardController {
     private void loadAvailableDonations() {
         if (coordinator == null) return;
 
-        List<Donation> donations = coordinator.getDonationRepository().findByStatus(DonationStatus.AVAILABLE);
+        String typeFilter = typeFilterComboBox.getValue();
+        boolean urgentOnly = urgentCheckBox.isSelected();
+
+        List<Donation> donations = coordinator.getDonationRepository().findByStatus(DonationStatus.AVAILABLE)
+                .stream()
+                .filter(d -> typeFilter == null || "All Types".equals(typeFilter)
+                        || d.getType().getDisplayName().equals(typeFilter))
+                .filter(d -> !urgentOnly || d.isUrgent())
+                .toList();
         availableViewModel.setDonations(donations);
-        
-        // Update donor names
-        for (var row : availableViewModel.getDonations()) {
-            coordinator.getUserRepository().findById(row.getId()) // This won't work - need donor ID
+
+        // Resolve donor names by the donation's donor id (same order as the rows).
+        var rows = availableViewModel.getDonations();
+        for (int i = 0; i < donations.size(); i++) {
+            Donation donation = donations.get(i);
+            var row = rows.get(i);
+            coordinator.getUserRepository().findById(donation.getDonorId())
                     .ifPresent(u -> row.setDonorName(u.getName()));
         }
-        applyFilters();
     }
 
     private void loadClaimedDonations() {
-        if (coordinator == null) return;
+        if (coordinator == null || claimedTable == null) return;
 
         var user = sessionContext.getCurrentUser();
         if (user == null) return;
@@ -113,15 +125,13 @@ public class RecipientDashboardController {
 
     @FXML
     private void handleFilterChange() {
-        applyFilters();
+        loadAvailableDonations();
     }
 
-    private void applyFilters() {
-        String typeFilter = typeFilterComboBox.getValue();
-        boolean urgentOnly = urgentCheckBox.isSelected();
-
-        // For simplicity, we'll just reload with filters
-        // In a full implementation, we'd use a filtered list
+    @FXML
+    private void handleClearFilters() {
+        typeFilterComboBox.setValue("All Types");
+        urgentCheckBox.setSelected(false);
         loadAvailableDonations();
     }
 

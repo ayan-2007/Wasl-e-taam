@@ -5,17 +5,16 @@ import com.waslataam.domain.UserRole;
 import com.waslataam.factory.UserFactory;
 import com.waslataam.factory.UserParams;
 import com.waslataam.domain.Location;
+import com.waslataam.repository.UserRepository;
+import com.waslataam.ui.util.SceneFactory;
 import com.waslataam.viewmodel.SessionContext;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.UUID;
 
 public class LoginController {
     @FXML private ComboBox<UserRole> roleComboBox;
@@ -72,6 +71,11 @@ public class LoginController {
                         .vehicleType(role == UserRole.VOLUNTEER ? com.waslataam.domain.VehicleType.CAR : null)
                         .build();
                 user = userFactory.create(params);
+
+                UserRepository userRepository = getUserRepository();
+                if (userRepository != null) {
+                    userRepository.save(user);
+                }
             }
 
             sessionContext.setCurrentUser(user);
@@ -82,19 +86,24 @@ public class LoginController {
         }
     }
 
+    private UserRepository getUserRepository() {
+        return com.waslataam.Main.getCoordinator() != null
+                ? com.waslataam.Main.getCoordinator().getUserRepository()
+                : null;
+    }
+
     private User findUserByEmail(String email) {
-        // In a real app, this would query the user repository
-        // For now, return null to always create new users
-        return null;
+        UserRepository userRepository = getUserRepository();
+        return userRepository != null ? userRepository.findByEmail(email).orElse(null) : null;
     }
 
     private void loadMainShell() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/waslataam/ui/resources/fxml/MainShell.fxml"));
             Parent root = loader.load();
-            
+
             Stage stage = (Stage) loginButton.getScene().getWindow();
-            stage.setScene(new Scene(root, 1200, 800));
+            stage.setScene(SceneFactory.create(root, 1200, 800));
             stage.setTitle("Wasl-e-Ta'am - " + sessionContext.getCurrentUser().getName());
             stage.show();
         } catch (Exception e) {

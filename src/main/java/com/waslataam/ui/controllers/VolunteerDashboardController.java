@@ -60,7 +60,7 @@ public class VolunteerDashboardController {
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
-        recipientColumn.setCellValueFactory(new PropertyValueFactory<>("donorName"));
+        recipientColumn.setCellValueFactory(new PropertyValueFactory<>("recipientName"));
 
         actionColumn.setCellFactory(createActionButtonFactory());
     }
@@ -73,6 +73,17 @@ public class VolunteerDashboardController {
 
         List<Donation> donations = coordinator.getDonationRepository().findByVolunteerId(user.getId());
         viewModel.setDonations(donations);
+
+        // Resolve recipient names by the donation's recipient id (same order as the rows).
+        var rows = viewModel.getDonations();
+        for (int i = 0; i < donations.size(); i++) {
+            UUID recipientId = donations.get(i).getRecipientId();
+            if (recipientId != null) {
+                var row = rows.get(i);
+                coordinator.getUserRepository().findById(recipientId)
+                        .ifPresent(u -> row.setRecipientName(u.getName()));
+            }
+        }
     }
 
     @FXML

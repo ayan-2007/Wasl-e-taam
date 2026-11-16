@@ -5,84 +5,139 @@
 <?import javafx.scene.layout.*?>
 
 <ScrollPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.PostDonationFormController"
-            fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
-    <VBox spacing="20" styleClass="root">
-        <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
-        
-        <HBox alignment="CENTER_LEFT" spacing="15">
-            <Button text="← Back" styleClass="button-secondary" onAction="#handleBack"/>
-            <Label text="Post New Donation" styleClass="header-label"/>
-        </HBox>
-        
-        <Separator/>
-        
-        <VBox spacing="16" maxWidth="600">
-            <VBox spacing="8">
-                <Label text="Donation Type *" style="-fx-font-weight: 500;"/>
-                <ComboBox fx:id="typeComboBox" id="typeComboBox" prefWidth="600" promptText="Select donation type" onAction="#handleTypeChange"/>
+            fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+    <VBox styleClass="page" spacing="24">
+        <padding><Insets top="40" right="48" bottom="40" left="48"/></padding>
+
+        <HBox alignment="CENTER_LEFT" spacing="16">
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="Post a donation" styleClass="page-title"/>
+                <Label text="Tell us what you have, where it is, and when it needs to be collected. We check it before it goes live."
+                       styleClass="page-subtitle" wrapText="true" maxWidth="680"/>
             </VBox>
-            
-            <HBox spacing="16">
-                <VBox spacing="8" HBox.hgrow="ALWAYS">
-                    <Label text="Quantity *" style="-fx-font-weight: 500;"/>
-                    <TextField fx:id="quantityField" id="quantityField" promptText="e.g., 50" prefWidth="250"/>
+            <Button text="Back to my donations" styleClass="button-ghost" onAction="#handleBack"/>
+        </HBox>
+
+        <HBox spacing="24" alignment="TOP_LEFT">
+            <VBox styleClass="card" spacing="20" maxWidth="640" HBox.hgrow="ALWAYS">
+
+                <VBox spacing="6">
+                    <Label text="Food type" styleClass="field-label" labelFor="$typeComboBox"/>
+                    <ComboBox fx:id="typeComboBox" promptText="Select a food type" maxWidth="Infinity" onAction="#handleTypeChange"/>
+                    <Label fx:id="typeError" styleClass="field-error" visible="false" managed="false" wrapText="true"/>
                 </VBox>
-                <VBox spacing="8" HBox.hgrow="ALWAYS">
-                    <Label text="Unit *" style="-fx-font-weight: 500;"/>
-                    <ComboBox fx:id="unitComboBox" id="unitComboBox" prefWidth="250" promptText="Select unit"/>
+
+                <HBox spacing="16">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Quantity" styleClass="field-label" labelFor="$quantityField"/>
+                        <TextField fx:id="quantityField" promptText="e.g. 25"/>
+                        <Label fx:id="quantityError" styleClass="field-error" visible="false" managed="false" wrapText="true"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Unit" styleClass="field-label" labelFor="$unitComboBox"/>
+                        <ComboBox fx:id="unitComboBox" promptText="Select a unit"/>
+                        <Label fx:id="unitError" styleClass="field-error" visible="false" managed="false" wrapText="true"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="16">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Expiry date" styleClass="field-label" labelFor="$expiryDatePicker"/>
+                        <DatePicker fx:id="expiryDatePicker" promptText="Choose a date" maxWidth="Infinity"/>
+                        <Label fx:id="expiryError" styleClass="field-error" visible="false" managed="false" wrapText="true"/>
+                    </VBox>
+                    <VBox spacing="6" prefWidth="150" minWidth="130">
+                        <Label text="Hour (24h)" styleClass="field-label" labelFor="$expiryTimeSpinner"/>
+                        <Spinner fx:id="expiryTimeSpinner" editable="false" maxWidth="Infinity"/>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="6">
+                    <Label text="Pickup location" styleClass="field-label" labelFor="$locationField"/>
+                    <TextField fx:id="locationField" promptText="Street, building, area — e.g. Clifton Block 5, Karachi"/>
+                    <Label fx:id="locationError" styleClass="field-error" visible="false" managed="false" wrapText="true"/>
                 </VBox>
-            </HBox>
-            
-            <VBox spacing="8">
-                <Label text="Expiry Date & Time *" style="-fx-font-weight: 500;"/>
-                <HBox spacing="12">
-                    <DatePicker fx:id="expiryDatePicker" id="expiryDatePicker" prefWidth="200" promptText="Select date"/>
-                    <Spinner fx:id="expiryTimeSpinner" id="expiryTimeSpinner" prefWidth="150">
-                        <valueFactory>
-                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="23" initial="12"/>
-                        </valueFactory>
-                    </Spinner>
-                    <Label text=":00" style="-fx-padding: 0 0 0 8; -fx-font-size: 14px;"/>
+
+                <VBox fx:id="typeDetailsSection" spacing="16" visible="false" managed="false">
+                    <Separator/>
+                    <VBox spacing="2">
+                        <Label text="Storage and handling" styleClass="section-title"/>
+                        <Label text="These details change with the food type." styleClass="section-hint"/>
+                    </VBox>
+
+                    <VBox fx:id="perishableFields" spacing="6" visible="false" managed="false">
+                        <Label text="Storage temperature" styleClass="field-label" labelFor="$temperatureField"/>
+                        <TextField fx:id="temperatureField" promptText="e.g. 2–8°C, refrigerated"/>
+                        <Label fx:id="temperatureError" styleClass="field-error" visible="false" managed="false" wrapText="true"/>
+                    </VBox>
+
+                    <VBox fx:id="dryFoodFields" spacing="6" visible="false" managed="false">
+                        <Label text="Shelf life (days)" styleClass="field-label" labelFor="$shelfLifeSpinner"/>
+                        <Spinner fx:id="shelfLifeSpinner" editable="false" prefWidth="160"/>
+                    </VBox>
+
+                    <VBox fx:id="preparedMealFields" spacing="16" visible="false" managed="false">
+                        <VBox spacing="6">
+                            <Label text="Number of servings" styleClass="field-label" labelFor="$servingsSpinner"/>
+                            <Spinner fx:id="servingsSpinner" editable="false" prefWidth="160"/>
+                        </VBox>
+                        <VBox spacing="6">
+                            <Label text="Cooked on" styleClass="field-label" labelFor="$cookedAtPicker"/>
+                            <DatePicker fx:id="cookedAtPicker" promptText="Choose the cooking date" prefWidth="220"/>
+                            <Label fx:id="cookedAtError" styleClass="field-error" visible="false" managed="false" wrapText="true"/>
+                        </VBox>
+                    </VBox>
+                </VBox>
+
+                <HBox spacing="12" alignment="CENTER_RIGHT">
+                    <Button text="Cancel" styleClass="button-secondary" onAction="#handleBack"/>
+                    <Button fx:id="submitButton" text="Post donation" defaultButton="true" onAction="#handleSubmit"/>
                 </HBox>
             </VBox>
-            
-            <VBox spacing="8">
-                <Label text="Location *" style="-fx-font-weight: 500;"/>
-                <TextField fx:id="locationField" id="locationField" promptText="Enter address" prefWidth="600"/>
+
+            <VBox spacing="16" prefWidth="290" minWidth="260" maxWidth="310" HBox.hgrow="NEVER">
+                <VBox styleClass="card" spacing="16">
+                    <VBox spacing="2">
+                        <Label text="What happens next" styleClass="section-title"/>
+                        <Label text="A real sequence, not a waiting game." styleClass="section-hint" wrapText="true"/>
+                    </VBox>
+
+                    <HBox spacing="12" alignment="TOP_LEFT">
+                        <Label text="1" styleClass="step-number"/>
+                        <VBox spacing="2">
+                            <Label text="We check the details" styleClass="step-title"/>
+                            <Label text="Expiry, quantity and location are verified before the listing goes live." styleClass="step-body" wrapText="true"/>
+                        </VBox>
+                    </HBox>
+                    <HBox spacing="12" alignment="TOP_LEFT">
+                        <Label text="2" styleClass="step-number"/>
+                        <VBox spacing="2">
+                            <Label text="A recipient claims it" styleClass="step-title"/>
+                            <Label text="A kitchen reserves the food it can use." styleClass="step-body" wrapText="true"/>
+                        </VBox>
+                    </HBox>
+                    <HBox spacing="12" alignment="TOP_LEFT">
+                        <Label text="3" styleClass="step-number"/>
+                        <VBox spacing="2">
+                            <Label text="A volunteer collects it" styleClass="step-title"/>
+                            <Label text="Pickup and delivery are confirmed in the volunteer queue." styleClass="step-body" wrapText="true"/>
+                        </VBox>
+                    </HBox>
+                    <HBox spacing="12" alignment="TOP_LEFT">
+                        <Label text="4" styleClass="step-number"/>
+                        <VBox spacing="2">
+                            <Label text="The impact is recorded" styleClass="step-title"/>
+                            <Label text="Delivered food adds to meals served and CO₂ avoided." styleClass="step-body" wrapText="true"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <VBox styleClass="hint-box" spacing="6">
+                    <Label text="Safety first" styleClass="hint-title"/>
+                    <Label text="Perishables need a storage temperature. Prepared meals need a cooking date. Listings that fail a check are marked rejected."
+                           styleClass="hint-body" wrapText="true"/>
+                </VBox>
             </VBox>
-            
-            <!-- Perishable specific fields -->
-            <VBox fx:id="perishableFields" id="perishableFields" spacing="8" visible="false" managed="false">
-                <Label text="Temperature Requirement *" style="-fx-font-weight: 500;"/>
-                <TextField fx:id="temperatureField" id="temperatureField" promptText="e.g., 2-8°C (Refrigerated)" prefWidth="600"/>
-            </VBox>
-            
-            <!-- Dry Food specific fields -->
-            <VBox fx:id="dryFoodFields" spacing="8" visible="false" managed="false">
-                <Label text="Shelf Life (Days) *" style="-fx-font-weight: 500;"/>
-                <Spinner fx:id="shelfLifeSpinner" prefWidth="150">
-                    <valueFactory>
-                        <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="3650" initial="365"/>
-                    </valueFactory>
-                </Spinner>
-            </VBox>
-            
-            <!-- Prepared Meal specific fields -->
-            <VBox fx:id="preparedMealFields" spacing="8" visible="false" managed="false">
-                <Label text="Number of Servings *" style="-fx-font-weight: 500;"/>
-                <Spinner fx:id="servingsSpinner" prefWidth="150">
-                    <valueFactory>
-                        <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="10000" initial="50"/>
-                    </valueFactory>
-                </Spinner>
-                <Label text="Cooked At *" style="-fx-font-weight: 500;"/>
-                <DatePicker fx:id="cookedAtPicker" prefWidth="200" promptText="Select date/time"/>
-            </VBox>
-            
-            <HBox spacing="12" alignment="CENTER_RIGHT">
-                <Button text="Cancel" styleClass="button-secondary" onAction="#handleBack"/>
-                <Button fx:id="submitButton" id="submitButton" text="Submit Donation" styleClass="button" defaultButton="true" onAction="#handleSubmit"/>
-            </HBox>
-        </VBox>
+        </HBox>
     </VBox>
 </ScrollPane>

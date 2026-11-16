@@ -21,7 +21,6 @@ public class DonorDashboardController {
     @FXML private TableColumn<DonationListViewModel.DonationRow, String> statusColumn;
     @FXML private TableColumn<DonationListViewModel.DonationRow, String> expiryColumn;
     @FXML private TableColumn<DonationListViewModel.DonationRow, String> locationColumn;
-    @FXML private TableColumn<DonationListViewModel.DonationRow, String> postedColumn;
 
     private final DonationListViewModel viewModel = new DonationListViewModel();
     private final SessionContext sessionContext = SessionContext.getInstance();
@@ -47,7 +46,6 @@ public class DonorDashboardController {
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         expiryColumn.setCellValueFactory(cellData -> cellData.getValue().expiryTimeProperty().asString());
         locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
-        postedColumn.setCellValueFactory(cellData -> cellData.getValue().expiryTimeProperty().asString()); // Will fix
 
         // Format dates
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -64,14 +62,6 @@ public class DonorDashboardController {
                         setText(item);
                     }
                 }
-            }
-        });
-
-        postedColumn.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null : "N/A"); // Placeholder
             }
         });
     }

@@ -2,84 +2,82 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.TextAlignment?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.ImpactDashboardController"
-      spacing="20" styleClass="root">
-    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
-    
-    <HBox alignment="CENTER_LEFT" spacing="15">
-        <Button text="← Back" styleClass="button-secondary" onAction="#handleBack"/>
-        <Label text="Impact Dashboard" styleClass="header-label"/>
+      styleClass="page" spacing="24">
+    <padding><Insets top="40" right="48" bottom="40" left="48"/></padding>
+
+    <VBox spacing="4">
+        <Label text="Impact to date" styleClass="page-title"/>
+        <Label text="Verified deliveries only. Figures update as volunteers confirm each drop-off."
+               styleClass="page-subtitle" wrapText="true" maxWidth="680"/>
+    </VBox>
+
+    <HBox styleClass="metric-band">
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Meals served" styleClass="stat-label"/>
+            <Label fx:id="mealsServedValue" text="0 meals" styleClass="stat-value stat-value-accent"/>
+        </VBox>
+        <Region styleClass="metric-divider" maxHeight="Infinity"/>
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Food saved" styleClass="stat-label"/>
+            <Label fx:id="kgSavedValue" text="0.0 kg" styleClass="stat-value"/>
+        </VBox>
+        <Region styleClass="metric-divider" maxHeight="Infinity"/>
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="CO₂ avoided" styleClass="stat-label"/>
+            <Label fx:id="co2AvoidedValue" text="0.0 kg CO₂" styleClass="stat-value"/>
+        </VBox>
+        <Region styleClass="metric-divider" maxHeight="Infinity"/>
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Active donations" styleClass="stat-label"/>
+            <Label fx:id="activeDonationsValue" text="0 active" styleClass="stat-value"/>
+        </VBox>
     </HBox>
-    
-    <Separator/>
-    
-    <HBox spacing="20" styleClass="stat-row">
-        <VBox fx:id="kgSavedCard" styleClass="stat-card stat-card-green" prefWidth="200" HBox.hgrow="ALWAYS">
-            <Label text="Food Saved (kg)" styleClass="label-text"/>
-            <Label fx:id="kgSavedValue" text="0.0" styleClass="value-label"/>
-        </VBox>
-        <VBox fx:id="mealsServedCard" styleClass="stat-card stat-card-gold" prefWidth="200" HBox.hgrow="ALWAYS">
-            <Label text="Meals Served" styleClass="label-text"/>
-            <Label fx:id="mealsServedValue" text="0" styleClass="value-label"/>
-        </VBox>
-        <VBox fx:id="co2AvoidedCard" styleClass="stat-card stat-card-blue" prefWidth="200" HBox.hgrow="ALWAYS">
-            <Label text="CO₂ Avoided (kg)" styleClass="label-text"/>
-            <Label fx:id="co2AvoidedValue" text="0.0" styleClass="value-label"/>
-        </VBox>
-        <VBox fx:id="activeDonationsCard" styleClass="stat-card stat-card-orange" prefWidth="200" HBox.hgrow="ALWAYS">
-            <Label text="Active Donations" styleClass="label-text"/>
-            <Label fx:id="activeDonationsValue" text="0" styleClass="value-label"/>
-        </VBox>
-    </HBox>
-    
-    <Separator/>
-    
-    <HBox spacing="20">
-        <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e0e8e2; -fx-border-radius: 8;">
-            <Label text="Top Donors" styleClass="card-title"/>
-            <TableView fx:id="topDonorsTable" prefHeight="300">
+
+    <HBox spacing="24" VBox.vgrow="ALWAYS">
+        <VBox styleClass="card" spacing="16" HBox.hgrow="ALWAYS">
+            <VBox spacing="2">
+                <Label text="Top donors" styleClass="section-title"/>
+                <Label text="Ranked by kilograms delivered." styleClass="section-hint"/>
+            </VBox>
+            <TableView fx:id="topDonorsTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn text="Rank" prefWidth="60">
-                        <cellValueFactory><PropertyValueFactory property="rank"/></cellValueFactory>
-                    </TableColumn>
-                    <TableColumn text="Donor" prefWidth="200">
-                        <cellValueFactory><PropertyValueFactory property="name"/></cellValueFactory>
-                    </TableColumn>
-                    <TableColumn text="Donations" prefWidth="100">
-                        <cellValueFactory><PropertyValueFactory property="count"/></cellValueFactory>
-                    </TableColumn>
-                    <TableColumn text="Total kg" prefWidth="100">
-                        <cellValueFactory><PropertyValueFactory property="totalKg"/></cellValueFactory>
-                    </TableColumn>
+                    <TableColumn text="Rank" prefWidth="60"/>
+                    <TableColumn text="Donor" prefWidth="220"/>
+                    <TableColumn text="Donations" prefWidth="110"/>
+                    <TableColumn text="Total kg" prefWidth="100"/>
                 </columns>
                 <placeholder>
-                    <Label text="No donor data yet." style="-fx-text-fill: #6a7a6e;"/>
+                    <VBox alignment="CENTER" spacing="4">
+                        <Label text="No donor data yet" styleClass="empty-title"/>
+                        <Label text="Top donors appear once a donation has been delivered."
+                               styleClass="empty-body" wrapText="true" maxWidth="340" textAlignment="CENTER"/>
+                    </VBox>
                 </placeholder>
             </TableView>
         </VBox>
-        
-        <VBox spacing="10" HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e0e8e2; -fx-border-radius: 8;">
-            <Label text="Top Recipients" styleClass="card-title"/>
-            <TableView fx:id="topRecipientsTable" prefHeight="300">
+
+        <VBox styleClass="card" spacing="16" prefWidth="360" minWidth="320" maxWidth="390" HBox.hgrow="NEVER">
+            <VBox spacing="2">
+                <Label text="Top recipients" styleClass="section-title"/>
+                <Label text="Ranked by kilograms received." styleClass="section-hint"/>
+            </VBox>
+            <TableView fx:id="topRecipientsTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn text="Rank" prefWidth="60">
-                        <cellValueFactory><PropertyValueFactory property="rank"/></cellValueFactory>
-                    </TableColumn>
-                    <TableColumn text="Recipient" prefWidth="200">
-                        <cellValueFactory><PropertyValueFactory property="name"/></cellValueFactory>
-                    </TableColumn>
-                    <TableColumn text="Claims" prefWidth="100">
-                        <cellValueFactory><PropertyValueFactory property="count"/></cellValueFactory>
-                    </TableColumn>
-                    <TableColumn text="Total kg" prefWidth="100">
-                        <cellValueFactory><PropertyValueFactory property="totalKg"/></cellValueFactory>
-                    </TableColumn>
+                    <TableColumn text="Rank" prefWidth="60"/>
+                    <TableColumn text="Recipient" prefWidth="190"/>
+                    <TableColumn text="Claims" prefWidth="90"/>
+                    <TableColumn text="Total kg" prefWidth="100"/>
                 </columns>
                 <placeholder>
-                    <Label text="No recipient data yet." style="-fx-text-fill: #6a7a6e;"/>
+                    <VBox alignment="CENTER" spacing="4">
+                        <Label text="No recipient data yet" styleClass="empty-title"/>
+                        <Label text="Recipients appear once they receive a delivered donation."
+                               styleClass="empty-body" wrapText="true" maxWidth="300" textAlignment="CENTER"/>
+                    </VBox>
                 </placeholder>
             </TableView>
         </VBox>

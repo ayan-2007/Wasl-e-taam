@@ -21,6 +21,7 @@ import com.waslataam.repository.InMemoryUserRepo;
 import com.waslataam.repository.UserRepository;
 import com.waslataam.strategy.MatchingEngine;
 import com.waslataam.strategy.NearestFirstStrategy;
+import com.waslataam.ui.util.SceneFactory;
 import com.waslataam.viewmodel.DashboardViewModel;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -48,13 +49,13 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/waslataam/ui/resources/fxml/LoginView.fxml"));
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 400, 500);
-        scene.getStylesheets().add(getClass().getResource("/com/waslataam/ui/resources/css/theme.css").toExternalForm());
+        Scene scene = SceneFactory.create(root, 1080, 720);
 
         primaryStage.setTitle("Wasl-e-Ta'am - Smart Food Surplus Redistribution");
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(1024);
-        primaryStage.setMinHeight(768);
+        primaryStage.setMinWidth(960);
+        primaryStage.setMinHeight(640);
+        primaryStage.centerOnScreen();
         primaryStage.show();
     }
 

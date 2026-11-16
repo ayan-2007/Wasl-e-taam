@@ -84,17 +84,22 @@ public class DonationListViewModel {
 
     public static class DonationRow {
         private final UUID id;
+        private final UUID donorId;
+        private final UUID recipientId;
         private final String type;
         private final DoubleProperty quantity = new SimpleDoubleProperty();
         private final String unit;
         private final StringProperty status = new SimpleStringProperty();
         private final StringProperty donorName = new SimpleStringProperty();
+        private final StringProperty recipientName = new SimpleStringProperty();
         private final ObjectProperty<LocalDateTime> expiryTime = new SimpleObjectProperty<>();
         private final BooleanProperty urgent = new SimpleBooleanProperty();
         private final StringProperty location = new SimpleStringProperty();
 
         public DonationRow(Donation donation) {
             this.id = donation.getId();
+            this.donorId = donation.getDonorId();
+            this.recipientId = donation.getRecipientId();
             this.type = donation.getType().getDisplayName();
             this.quantity.set(donation.getQuantity());
             this.unit = donation.getUnit();
@@ -105,15 +110,21 @@ public class DonationListViewModel {
         }
 
         public UUID getId() { return id; }
+        public UUID getDonorId() { return donorId; }
+        public UUID getRecipientId() { return recipientId; }
         public String getType() { return type; }
         public DoubleProperty quantityProperty() { return quantity; }
         public double getQuantity() { return quantity.get(); }
+        public String getQuantityDisplay() { return com.waslataam.ui.util.UiUtils.quantityText(quantity.get(), unit); }
         public String getUnit() { return unit; }
         public StringProperty statusProperty() { return status; }
         public String getStatus() { return status.get(); }
         public StringProperty donorNameProperty() { return donorName; }
         public String getDonorName() { return donorName.get(); }
         public void setDonorName(String name) { donorName.set(name); }
+        public StringProperty recipientNameProperty() { return recipientName; }
+        public String getRecipientName() { return recipientName.get(); }
+        public void setRecipientName(String name) { recipientName.set(name); }
         public ObjectProperty<LocalDateTime> expiryTimeProperty() { return expiryTime; }
         public LocalDateTime getExpiryTime() { return expiryTime.get(); }
         public BooleanProperty urgentProperty() { return urgent; }

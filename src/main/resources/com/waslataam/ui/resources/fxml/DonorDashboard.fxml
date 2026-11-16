@@ -2,46 +2,63 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.TextAlignment?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.DonorDashboardController"
-      spacing="20" styleClass="root">
-    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
-    
-    <HBox alignment="CENTER_LEFT" spacing="15">
-        <Label fx:id="welcomeLabel" id="welcomeLabel" text="Donor Dashboard" styleClass="header-label"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button fx:id="postDonationButton" id="postDonationButton" text="+ Post New Donation" styleClass="button" onAction="#handlePostDonation"/>
+      styleClass="page" spacing="24">
+    <padding><Insets top="40" right="48" bottom="40" left="48"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <Label fx:id="welcomeLabel" text="Your donations" styleClass="page-title"/>
+            <Label text="Every listing you post is checked for expiry, quantity and location before it goes live."
+                   styleClass="page-subtitle" wrapText="true" maxWidth="640"/>
+        </VBox>
+        <Button fx:id="postDonationButton" text="Post a donation" onAction="#handlePostDonation"/>
     </HBox>
-    
-    <Separator/>
-    
-    <Label text="Your Donations" styleClass="subheader-label"/>
-    
-    <TableView fx:id="donationsTable" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="typeColumn" text="Type" prefWidth="150">
-                <cellValueFactory><PropertyValueFactory property="type"/></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="120">
-                <cellValueFactory><PropertyValueFactory property="quantity"/></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="statusColumn" text="Status" prefWidth="150">
-                <cellValueFactory><PropertyValueFactory property="status"/></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="expiryColumn" text="Expiry" prefWidth="180">
-                <cellValueFactory><PropertyValueFactory property="expiryTime"/></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="locationColumn" text="Location" prefWidth="200">
-                <cellValueFactory><PropertyValueFactory property="location"/></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="postedColumn" text="Posted" prefWidth="160">
-                <cellValueFactory><PropertyValueFactory property="postedAt"/></cellValueFactory>
-            </TableColumn>
-        </columns>
-        <placeholder>
-            <Label text="No donations yet. Click 'Post New Donation' to get started." style="-fx-text-fill: #6a7a6e;"/>
-        </placeholder>
-    </TableView>
+
+    <HBox styleClass="metric-band">
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Listings posted" styleClass="stat-label"/>
+            <Label fx:id="totalDonationsValue" text="0" styleClass="stat-value"/>
+        </VBox>
+        <Region styleClass="metric-divider" maxHeight="Infinity"/>
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Awaiting pickup" styleClass="stat-label"/>
+            <Label fx:id="activeDonationsValue" text="0" styleClass="stat-value"/>
+        </VBox>
+        <Region styleClass="metric-divider" maxHeight="Infinity"/>
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Delivered" styleClass="stat-label"/>
+            <Label fx:id="deliveredValue" text="0" styleClass="stat-value stat-value-accent"/>
+        </VBox>
+    </HBox>
+
+    <VBox styleClass="card" spacing="16" VBox.vgrow="ALWAYS">
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                <Label text="Donation history" styleClass="section-title"/>
+                <Label text="Status updates automatically as recipients and volunteers act." styleClass="section-hint"/>
+            </VBox>
+            <Label fx:id="tableCountLabel" text="0 listings" styleClass="count-pill"/>
+        </HBox>
+
+        <TableView fx:id="donationsTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="typeColumn" text="Food" prefWidth="190"/>
+                <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="130"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="150"/>
+                <TableColumn fx:id="expiryColumn" text="Expires" prefWidth="180"/>
+                <TableColumn fx:id="locationColumn" text="Pickup location" prefWidth="260"/>
+            </columns>
+            <placeholder>
+                <VBox alignment="CENTER" spacing="4">
+                    <Label text="No donations yet" styleClass="empty-title"/>
+                    <Label text="Post your first surplus listing and we’ll walk it through verification."
+                           styleClass="empty-body" wrapText="true" maxWidth="380" textAlignment="CENTER"/>
+                </VBox>
+            </placeholder>
+        </TableView>
+    </VBox>
 </VBox>

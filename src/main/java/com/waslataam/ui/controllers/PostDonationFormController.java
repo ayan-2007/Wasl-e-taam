@@ -23,6 +23,7 @@ public class PostDonationFormController {
     @FXML private DatePicker expiryDatePicker;
     @FXML private Spinner<Integer> expiryTimeSpinner;
     @FXML private TextField locationField;
+    @FXML private VBox typeDetailsSection;
     @FXML private VBox perishableFields;
     @FXML private TextField temperatureField;
     @FXML private VBox dryFoodFields;
@@ -49,6 +50,10 @@ public class PostDonationFormController {
     @FXML
     private void handleTypeChange() {
         DonationType type = typeComboBox.getValue();
+        boolean hasType = type != null;
+        typeDetailsSection.setVisible(hasType);
+        typeDetailsSection.setManaged(hasType);
+
         perishableFields.setVisible(false);
         perishableFields.setManaged(false);
         dryFoodFields.setVisible(false);

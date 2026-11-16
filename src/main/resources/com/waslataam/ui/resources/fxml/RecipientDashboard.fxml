@@ -2,43 +2,94 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.TextAlignment?>
 
-<TabPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.RecipientDashboardController"
-         tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-    <tabs>
-        <Tab text="Available Donations">
-            <fx:include source="AvailableDonationsView.fxml"/>
-        </Tab>
-        <Tab text="My Claims">
-            <VBox spacing="20" styleClass="root">
-                <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
-                <HBox alignment="CENTER_LEFT">
-                    <Label text="My Claimed Donations" styleClass="header-label"/>
-                </HBox>
-                <Separator/>
-                <TableView fx:id="claimedTable" VBox.vgrow="ALWAYS">
-                    <columns>
-                        <TableColumn fx:id="cTypeColumn" text="Type" prefWidth="150">
-                            <cellValueFactory><PropertyValueFactory property="type"/></cellValueFactory>
-                        </TableColumn>
-                        <TableColumn fx:id="cQuantityColumn" text="Quantity" prefWidth="120">
-                            <cellValueFactory><PropertyValueFactory property="quantity"/></cellValueFactory>
-                        </TableColumn>
-                        <TableColumn fx:id="cStatusColumn" text="Status" prefWidth="150">
-                            <cellValueFactory><PropertyValueFactory property="status"/></cellValueFactory>
-                        </TableColumn>
-                        <TableColumn fx:id="cExpiryColumn" text="Expiry" prefWidth="180">
-                            <cellValueFactory><PropertyValueFactory property="expiryTime"/></cellValueFactory>
-                        </TableColumn>
-                        <TableColumn fx:id="cActionColumn" text="Action" prefWidth="150"/>
-                    </columns>
-                    <placeholder>
-                        <Label text="No claimed donations." style="-fx-text-fill: #6a7a6e;"/>
-                    </placeholder>
-                </TableView>
-            </VBox>
-        </Tab>
-    </tabs>
-</TabPane>
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.RecipientDashboardController"
+      styleClass="page" spacing="24">
+    <padding><Insets top="40" right="48" bottom="40" left="48"/></padding>
+
+    <VBox spacing="4">
+        <Label fx:id="welcomeLabel" text="Find surplus food" styleClass="page-title"/>
+        <Label text="Claim what your kitchen can use today. A claim can be cancelled until a volunteer collects the food."
+               styleClass="page-subtitle" wrapText="true" maxWidth="680"/>
+    </VBox>
+
+    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <tabs>
+            <Tab text="Available">
+                <VBox spacing="16">
+                    <padding><Insets top="20" right="0" bottom="0" left="0"/></padding>
+
+                    <HBox alignment="BOTTOM_LEFT" spacing="16">
+                        <VBox spacing="6">
+                            <Label text="Food type" styleClass="field-label" labelFor="$typeFilterComboBox"/>
+                            <ComboBox fx:id="typeFilterComboBox" prefWidth="210" promptText="All types" onAction="#handleFilterChange"/>
+                        </VBox>
+                        <VBox spacing="10">
+                            <Label text="Expiring soon" styleClass="field-label"/>
+                            <CheckBox fx:id="urgentCheckBox" text="Only urgent listings" onAction="#handleFilterChange"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Clear filters" styleClass="button-ghost" onAction="#handleClearFilters"/>
+                        <Label fx:id="availableCountLabel" text="0 listings" styleClass="count-pill"/>
+                    </HBox>
+
+                    <VBox styleClass="card" spacing="0" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="donationsTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="typeColumn" text="Food" prefWidth="180"/>
+                                <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="120"/>
+                                <TableColumn fx:id="expiryColumn" text="Expires" prefWidth="180"/>
+                                <TableColumn fx:id="locationColumn" text="Pickup location" prefWidth="240"/>
+                                <TableColumn fx:id="donorColumn" text="Donor" prefWidth="180"/>
+                                <TableColumn fx:id="actionColumn" text="Action" prefWidth="120"/>
+                            </columns>
+                            <placeholder>
+                                <VBox alignment="CENTER" spacing="4">
+                                    <Label text="Nothing available right now" styleClass="empty-title"/>
+                                    <Label text="Try clearing the filters, or check back after the next donation is posted."
+                                           styleClass="empty-body" wrapText="true" maxWidth="380" textAlignment="CENTER"/>
+                                </VBox>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+            <Tab text="My claims">
+                <VBox spacing="16">
+                    <padding><Insets top="20" right="0" bottom="0" left="0"/></padding>
+
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <VBox spacing="2" HBox.hgrow="ALWAYS">
+                            <Label text="Claimed donations" styleClass="section-title"/>
+                            <Label text="These are reserved for your organisation. Cancel a claim if plans change."
+                                   styleClass="section-hint"/>
+                        </VBox>
+                        <Label fx:id="claimedCountLabel" text="0 claims" styleClass="count-pill"/>
+                    </HBox>
+
+                    <VBox styleClass="card" spacing="0" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="claimedTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="cTypeColumn" text="Food" prefWidth="200"/>
+                                <TableColumn fx:id="cQuantityColumn" text="Quantity" prefWidth="130"/>
+                                <TableColumn fx:id="cStatusColumn" text="Status" prefWidth="150"/>
+                                <TableColumn fx:id="cExpiryColumn" text="Expires" prefWidth="190"/>
+                                <TableColumn fx:id="cActionColumn" text="Action" prefWidth="150"/>
+                            </columns>
+                            <placeholder>
+                                <VBox alignment="CENTER" spacing="4">
+                                    <Label text="No claims yet" styleClass="empty-title"/>
+                                    <Label text="Open the Available tab and claim a listing your kitchen can use."
+                                           styleClass="empty-body" wrapText="true" maxWidth="380" textAlignment="CENTER"/>
+                                </VBox>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </Tab>
+        </tabs>
+    </TabPane>
+</VBox>

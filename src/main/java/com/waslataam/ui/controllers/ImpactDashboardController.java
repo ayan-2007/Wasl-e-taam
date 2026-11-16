@@ -36,6 +36,9 @@ public class ImpactDashboardController {
     }
 
     private void bindDashboard() {
+        if (kgSavedValue.textProperty().isBound()) {
+            return;
+        }
         kgSavedValue.textProperty().bind(dashboardViewModel.kgSavedProperty().asString("%.1f kg"));
         mealsServedValue.textProperty().bind(dashboardViewModel.mealsServedProperty().asString("%d meals"));
         co2AvoidedValue.textProperty().bind(dashboardViewModel.co2AvoidedProperty().asString("%.1f kg CO₂"));
@@ -44,8 +47,13 @@ public class ImpactDashboardController {
 
     @FXML
     public void initialize() {
+        if (coordinator == null) {
+            coordinator = com.waslataam.Main.getCoordinator();
+        }
+        bindDashboard();
         setupTopDonorsTable();
         setupTopRecipientsTable();
+        loadTopEntities();
     }
 
     private void setupTopDonorsTable() {
@@ -163,7 +171,9 @@ public class ImpactDashboardController {
 
     @FXML
     private void handleBack() {
-        // Navigation handled by MainShellController
+        if (MainShellController.getInstance() != null) {
+            MainShellController.getInstance().navigateTo("/com/waslataam/ui/resources/fxml/AdminDashboard.fxml", "adminDashboard");
+        }
     }
 
     private record DonorStats(int count, double totalKg) {}

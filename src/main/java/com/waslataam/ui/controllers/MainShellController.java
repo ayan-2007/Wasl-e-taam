@@ -1,11 +1,12 @@
 package com.waslataam.ui.controllers;
 
+import com.waslataam.ui.util.SceneFactory;
+import com.waslataam.ui.util.ThemeManager;
 import com.waslataam.viewmodel.SessionContext;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,9 +20,10 @@ import java.util.Map;
 
 public class MainShellController {
     @FXML private VBox sidebar;
-    @FXML private Label logoLabel;
-    @FXML private Label userInfoLabel;
+    @FXML private Label userNameLabel;
+    @FXML private Label userRoleLabel;
     @FXML private VBox navButtons;
+    @FXML private Button themeButton;
     @FXML private Button logoutButton;
     @FXML private StackPane contentArea;
 
@@ -42,13 +44,15 @@ public class MainShellController {
         instance = this;
         setupUserInfo();
         setupNavigation();
+        themeButton.setText(ThemeManager.isDark() ? "Light mode" : "Dark mode");
         loadDefaultView();
     }
 
     private void setupUserInfo() {
         var user = sessionContext.getCurrentUser();
         if (user != null) {
-            userInfoLabel.setText(user.getName() + " (" + user.getRole().getDisplayName() + ")");
+            userNameLabel.setText(user.getName());
+            userRoleLabel.setText(user.getRole().getDisplayName());
         }
     }
 
@@ -108,14 +112,23 @@ public class MainShellController {
     }
 
     @FXML
+    private void handleThemeToggle() {
+        if (themeButton.getScene() != null) {
+            ThemeManager.toggle(themeButton.getScene());
+            themeButton.setText(ThemeManager.isDark() ? "Light mode" : "Dark mode");
+        }
+    }
+
+    @FXML
     private void handleLogout() {
         sessionContext.clear();
+        instance = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/waslataam/ui/resources/fxml/LoginView.fxml"));
             Parent root = loader.load();
-            
+
             Stage stage = (Stage) logoutButton.getScene().getWindow();
-            stage.setScene(new javafx.scene.Scene(root, 400, 500));
+            stage.setScene(SceneFactory.create(root, 1080, 720));
             stage.setTitle("Wasl-e-Ta'am - Login");
             stage.show();
         } catch (IOException e) {

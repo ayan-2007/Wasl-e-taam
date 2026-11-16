@@ -2,44 +2,71 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.TextAlignment?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.waslataam.ui.controllers.VolunteerDashboardController"
-      spacing="20" styleClass="root">
-    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
-    
-    <HBox alignment="CENTER_LEFT" spacing="15">
-        <Label fx:id="welcomeLabel" text="Volunteer Dashboard" styleClass="header-label"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <ToggleButton fx:id="availabilityToggle" text="Available" selected="true" onAction="#handleAvailabilityToggle"/>
+      styleClass="page" spacing="24">
+    <padding><Insets top="40" right="48" bottom="40" left="48"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <Label fx:id="welcomeLabel" text="Pickup queue" styleClass="page-title"/>
+            <Label text="Claimed donations waiting for a volunteer, plus deliveries already on the road."
+                   styleClass="page-subtitle" wrapText="true" maxWidth="640"/>
+        </VBox>
+        <ToggleButton fx:id="availabilityToggle" text="Available for pickups" selected="true"
+                      styleClass="toggle-button availability-toggle" onAction="#handleAvailabilityToggle">
+            <graphic>
+                <Circle radius="4" styleClass="availability-dot"/>
+            </graphic>
+        </ToggleButton>
     </HBox>
-    
-    <Separator/>
-    
-    <Label text="Assigned Pickups" styleClass="subheader-label"/>
-    
-    <TableView fx:id="pickupsTable" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="typeColumn" text="Type" prefWidth="150">
-                <cellValueFactory><PropertyValueFactory property="type"/></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="120">
-                <cellValueFactory><PropertyValueFactory property="quantity"/></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="statusColumn" text="Status" prefWidth="150">
-                <cellValueFactory><PropertyValueFactory property="status"/></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="locationColumn" text="Pickup Location" prefWidth="250">
-                <cellValueFactory><PropertyValueFactory property="location"/></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="recipientColumn" text="Recipient" prefWidth="180">
-                <cellValueFactory><PropertyValueFactory property="donorName"/></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="actionColumn" text="Action" prefWidth="200"/>
-        </columns>
-        <placeholder>
-            <Label text="No assigned pickups. You'll be assigned when a donation is claimed." style="-fx-text-fill: #6a7a6e;"/>
-        </placeholder>
-    </TableView>
+
+    <HBox styleClass="metric-band">
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Open pickups" styleClass="stat-label"/>
+            <Label fx:id="openPickupsValue" text="0" styleClass="stat-value"/>
+        </VBox>
+        <Region styleClass="metric-divider" maxHeight="Infinity"/>
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="In transit" styleClass="stat-label"/>
+            <Label fx:id="inTransitValue" text="0" styleClass="stat-value"/>
+        </VBox>
+        <Region styleClass="metric-divider" maxHeight="Infinity"/>
+        <VBox styleClass="metric" spacing="2" HBox.hgrow="ALWAYS">
+            <Label text="Delivered by you" styleClass="stat-label"/>
+            <Label fx:id="completedValue" text="0" styleClass="stat-value stat-value-accent"/>
+        </VBox>
+    </HBox>
+
+    <VBox styleClass="card" spacing="16" VBox.vgrow="ALWAYS">
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                <Label text="Active pickups" styleClass="section-title"/>
+                <Label text="Confirm pickup when the food is with you. Confirm delivery when it reaches the recipient."
+                       styleClass="section-hint"/>
+            </VBox>
+            <Label fx:id="tableCountLabel" text="0 active" styleClass="count-pill"/>
+        </HBox>
+
+        <TableView fx:id="pickupsTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="typeColumn" text="Food" prefWidth="180"/>
+                <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="120"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="140"/>
+                <TableColumn fx:id="locationColumn" text="Pickup location" prefWidth="240"/>
+                <TableColumn fx:id="recipientColumn" text="Recipient" prefWidth="180"/>
+                <TableColumn fx:id="actionColumn" text="Action" prefWidth="180"/>
+            </columns>
+            <placeholder>
+                <VBox alignment="CENTER" spacing="4">
+                    <Label text="No pickups waiting" styleClass="empty-title"/>
+                    <Label text="When a recipient claims a donation, it will appear here for collection."
+                           styleClass="empty-body" wrapText="true" maxWidth="380" textAlignment="CENTER"/>
+                </VBox>
+            </placeholder>
+        </TableView>
+    </VBox>
 </VBox>

@@ -4,26 +4,45 @@ A JavaFX desktop application connecting food donors with recipient organizations
 
 ## Prerequisites
 
-- **JDK 21** (LTS) or higher (minimum JDK 17)
+- **JDK 21** (the compiler targets Java 21)
 - **Maven 3.9+**
 
 ## Quick Start
+
+This is a **desktop JavaFX application** (not a web app), so there is no server or
+browser URL to open. Use one of the commands below from the project root.
 
 ### Build and Run
 ```bash
 mvn clean javafx:run
 ```
 
+On Windows you can also double-click `run.bat`, or run `./run.sh` on
+macOS/Linux. Both wrappers start the app with Maven.
+
 ### Run Tests
 ```bash
 mvn clean test
 ```
 
-### Package as JAR
+### Package as an executable JAR
 ```bash
 mvn clean package
-java --module-path /path/to/javafx-sdk-21/lib --add-modules javafx.controls,javafx.fxml -jar target/wasl-e-taam-1.0.0.jar
+java -jar target/wasl-e-taam-1.0.0.jar
 ```
+
+The `package` build creates a self-contained JAR that already includes the
+JavaFX runtime, so no separate JavaFX SDK path is needed. The bundled JavaFX
+native libraries are for the operating system used to build the JAR, so rebuild
+on macOS/Linux if you need to run it there.
+
+### Run from an IDE
+Use `com.waslataam.Launcher` as the main class. Do **not** use
+`com.waslataam.Main` directly: the JDK rejects an `Application` subclass when
+JavaFX is on the classpath with “JavaFX runtime components are missing”.
+`Launcher` delegates to `Main` and avoids that check.
+
+Alternatively, run `mvn exec:java` or `mvn javafx:run` from the IDE terminal.
 
 ## Architecture
 
@@ -93,7 +112,8 @@ This application follows a **3-layer architecture** with **6 Design Patterns**:
 
 ```
 src/main/java/com/waslataam/
-├── Main.java                          # Application entry point
+├── Launcher.java                      # Plain entry point for IDE/JAR runs
+├── Main.java                          # JavaFX Application
 ├── domain/                            # Domain models & exceptions
 │   ├── Donation.java                  # Abstract base + 3 subtypes
 │   ├── User.java                      # Abstract base + 4 subtypes
@@ -165,7 +185,7 @@ src/main/java/com/waslataam/
 
 ## Technology Stack
 
-- **Java 21** with JPMS (module-info.java)
+- **Java 21** (classpath-based; no `module-info.java` required)
 - **JavaFX 21** (Controls, FXML, Graphics, Base)
 - **ControlsFX 11.2** for enhanced controls
 - **Jackson 2.17** for JSON serialization

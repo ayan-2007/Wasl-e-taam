@@ -1,5 +1,9 @@
 package com.waslataam.ui.controllers;
 
+import com.waslataam.domain.Admin;
+import com.waslataam.domain.AdminPermission;
+import com.waslataam.domain.User;
+import com.waslataam.security.AdminGuardrails;
 import com.waslataam.ui.util.SceneFactory;
 import com.waslataam.ui.util.ThemeManager;
 import com.waslataam.viewmodel.SessionContext;
@@ -15,8 +19,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainShellController {
     @FXML private VBox sidebar;
@@ -29,14 +31,21 @@ public class MainShellController {
 
     private static MainShellController instance;
     private final SessionContext sessionContext = SessionContext.getInstance();
-    private final Map<String, Node> viewCache = new HashMap<>();
 
     public static MainShellController getInstance() {
         return instance;
     }
 
     public void navigateTo(String fxmlPath, String cacheKey) {
-        loadView(fxmlPath, cacheKey);
+        // Re-check the administrator permission on every navigation: a button
+        // left over from a previous session must not open a guarded screen.
+        AdminPermission required = AdminGuardrails.requiredPermission(fxmlPath);
+        if (required != null && !AdminGuardrails.hasPermission(sessionContext.getCurrentUser(), required)) {
+            showError("Access denied. Your administrator account does not have the “"
+                    + required.getDisplayName() + "” permission.");
+            return;
+        }
+        loadView(fxmlPath);
     }
 
     @FXML
@@ -49,10 +58,14 @@ public class MainShellController {
     }
 
     private void setupUserInfo() {
-        var user = sessionContext.getCurrentUser();
+        User user = sessionContext.getCurrentUser();
         if (user != null) {
             userNameLabel.setText(user.getName());
-            userRoleLabel.setText(user.getRole().getDisplayName());
+            if (user instanceof Admin admin) {
+                userRoleLabel.setText("Admin · " + AdminGuardrails.describeScope(admin));
+            } else {
+                userRoleLabel.setText(user.getRole().getDisplayName());
+            }
         }
     }
 
@@ -79,7 +92,7 @@ public class MainShellController {
         Button btn = new Button(text);
         btn.getStyleClass().add("button");
         btn.setMaxWidth(Double.MAX_VALUE);
-        btn.setOnAction(e -> loadView(fxmlPath, cacheKey));
+        btn.setOnAction(e -> navigateTo(fxmlPath, cacheKey));
         navButtons.getChildren().add(btn);
     }
 
@@ -90,21 +103,20 @@ public class MainShellController {
             case RECIPIENT -> "/com/waslataam/ui/resources/fxml/RecipientDashboard.fxml";
             case VOLUNTEER -> "/com/waslataam/ui/resources/fxml/VolunteerDashboard.fxml";
             case ADMIN -> "/com/waslataam/ui/resources/fxml/AdminDashboard.fxml";
-            default -> "/com/waslataam/ui/resources/fxml/DonorDashboard.fxml";
+            case null -> "/com/waslataam/ui/resources/fxml/DonorDashboard.fxml";
         };
-        loadView(defaultView, "default");
+        navigateTo(defaultView, "default");
     }
 
-    private void loadView(String fxmlPath, String cacheKey) {
+    /**
+     * Loads a fresh view on every navigation. The old cache served stale
+     * dashboards (for example, a donation posted after the donor dashboard was
+     * first opened would not appear until restart).
+     */
+    private void loadView(String fxmlPath) {
         try {
-            Node view = viewCache.computeIfAbsent(cacheKey, k -> {
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-                    return loader.load();
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to load view: " + fxmlPath, e);
-                }
-            });
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Node view = loader.load();
             contentArea.getChildren().setAll(view);
         } catch (Exception e) {
             showError("Failed to load view: " + e.getMessage());

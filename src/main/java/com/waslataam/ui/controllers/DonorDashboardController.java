@@ -14,6 +14,10 @@ import java.util.List;
 
 public class DonorDashboardController {
     @FXML private Label welcomeLabel;
+    @FXML private Label totalDonationsValue;
+    @FXML private Label activeDonationsValue;
+    @FXML private Label deliveredValue;
+    @FXML private Label tableCountLabel;
     @FXML private Button postDonationButton;
     @FXML private TableView<DonationListViewModel.DonationRow> donationsTable;
     @FXML private TableColumn<DonationListViewModel.DonationRow, String> typeColumn;
@@ -72,12 +76,34 @@ public class DonorDashboardController {
         var user = sessionContext.getCurrentUser();
         if (user == null) return;
 
-        List<Donation> donations = coordinator.getDonationRepository().findByDonorId(user.getId());
+        List<Donation> donations = coordinator.getDonationRepository().findByDonorId(user.getId())
+                .stream()
+                .sorted(java.util.Comparator.comparing(Donation::getPostedAt).reversed())
+                .toList();
         viewModel.setDonations(donations);
         
         // Update donor names
         for (var row : viewModel.getDonations()) {
             row.setDonorName(user.getName());
+        }
+
+        long active = donations.stream().filter(d -> d.getStatus().isActive()).count();
+        long delivered = donations.stream().filter(d -> d.getStatus() == DonationStatus.DELIVERED).count();
+
+        if (welcomeLabel != null) {
+            welcomeLabel.setText("Your donations, " + user.getName());
+        }
+        if (totalDonationsValue != null) {
+            totalDonationsValue.setText(String.valueOf(donations.size()));
+        }
+        if (activeDonationsValue != null) {
+            activeDonationsValue.setText(String.valueOf(active));
+        }
+        if (deliveredValue != null) {
+            deliveredValue.setText(String.valueOf(delivered));
+        }
+        if (tableCountLabel != null) {
+            tableCountLabel.setText(donations.size() + (donations.size() == 1 ? " listing" : " listings"));
         }
     }
 

@@ -357,6 +357,27 @@
     -fx-text-fill: -wt-text;
 }
 
+/* Text-only action used for mode switches (sign in <-> create account). */
+.button-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: -wt-accent;
+    -fx-border-width: 0;
+    -fx-padding: 4 0 4 0;
+    -fx-font-weight: 600;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.button-link:hover {
+    -fx-text-fill: -wt-accent-hover;
+    -fx-background-color: transparent;
+}
+
+.button-link:focused {
+    -fx-border-width: 0;
+    -fx-effect: none;
+}
+
 .button-danger {
     -fx-background-color: transparent;
     -fx-text-fill: -wt-danger;
@@ -570,7 +591,18 @@
     -fx-max-width: 380;
 }
 
+.login-scroll,
+.login-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.login-scroll {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
 .login-form .text-field,
+.login-form .password-field,
 .login-form .combo-box {
     -fx-max-width: Infinity;
 }

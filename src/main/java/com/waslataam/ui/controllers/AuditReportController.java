@@ -2,16 +2,17 @@ package com.waslataam.ui.controllers;
 
 import com.waslataam.coordination.DonationCoordinator;
 import com.waslataam.command.AuditTrail;
-import com.waslataam.command.DonationCommand;
-import com.waslataam.domain.DonationStatus;
+import com.waslataam.domain.AdminPermission;
+import com.waslataam.security.AdminGuardrails;
 import com.waslataam.viewmodel.AuditLogViewModel;
+import com.waslataam.viewmodel.SessionContext;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 public class AuditReportController {
     @FXML private DatePicker fromDatePicker;
@@ -29,11 +30,11 @@ public class AuditReportController {
     @FXML private TableColumn<AuditLogViewModel.AuditEntryRow, String> newStatusColumn;
 
     private final AuditLogViewModel viewModel = new AuditLogViewModel();
+    private final SessionContext sessionContext = SessionContext.getInstance();
     private DonationCoordinator coordinator;
 
     public void setCoordinator(DonationCoordinator coordinator) {
         this.coordinator = coordinator;
-        initialize();
         loadAuditLog();
     }
 
@@ -42,9 +43,9 @@ public class AuditReportController {
         if (coordinator == null) {
             coordinator = com.waslataam.Main.getCoordinator();
         }
+
         auditTable.setItems(viewModel.getEntries());
-        loadAuditLog();
-        
+
         timestampColumn.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
         actorColumn.setCellValueFactory(new PropertyValueFactory<>("actorId"));
         roleColumn.setCellValueFactory(new PropertyValueFactory<>("actorRole"));
@@ -53,33 +54,59 @@ public class AuditReportController {
         prevStatusColumn.setCellValueFactory(new PropertyValueFactory<>("previousStatus"));
         newStatusColumn.setCellValueFactory(new PropertyValueFactory<>("newStatus"));
 
-        actionFilterComboBox.getItems().addAll(
+        actionFilterComboBox.getItems().setAll(
                 "All Actions", "POST_DONATION", "CLAIM_DONATION", "CANCEL_CLAIM",
                 "PICKUP_DONATION", "DELIVER_DONATION", "EXPIRE_DONATION", "REJECT_DONATION"
         );
         actionFilterComboBox.setValue("All Actions");
 
-        // Enable undo button if there are commands to undo
-        updateUndoButton();
-    }
-
-    private void loadAuditLog() {
-        if (coordinator == null) return;
-
-        List<AuditTrail.AuditEntry> entries = coordinator.getAuditTrail().getEntries();
-        viewModel.setEntries(entries);
-        updateUndoButton();
-    }
-
-    @FXML
-    private void handleFilterChange() {
-        // For now, reload all - in a full implementation, filter the viewModel
         loadAuditLog();
     }
 
     @FXML
+    private void handleFilterChange() {
+        loadAuditLog();
+    }
+
+    private void loadAuditLog() {
+        if (coordinator == null) {
+            return;
+        }
+
+        LocalDate from = fromDatePicker != null ? fromDatePicker.getValue() : null;
+        LocalDate to = toDatePicker != null ? toDatePicker.getValue() : null;
+        String actor = actorFilterField != null && actorFilterField.getText() != null
+                ? actorFilterField.getText().trim().toLowerCase(Locale.ROOT)
+                : "";
+        String action = actionFilterComboBox != null ? actionFilterComboBox.getValue() : null;
+
+        List<AuditTrail.AuditEntry> entries = coordinator.getAuditTrail().getEntries().stream()
+                .filter(entry -> from == null || !entry.timestamp().toLocalDate().isBefore(from))
+                .filter(entry -> to == null || !entry.timestamp().toLocalDate().isAfter(to))
+                .filter(entry -> actor.isEmpty() || matchesActor(entry, actor))
+                .filter(entry -> action == null || action.isBlank() || "All Actions".equals(action)
+                        || action.equals(entry.action()))
+                .toList();
+
+        viewModel.setEntries(entries);
+        updateUndoButton();
+    }
+
+    private static boolean matchesActor(AuditTrail.AuditEntry entry, String actor) {
+        String id = entry.actorId() == null ? "" : entry.actorId().toString().toLowerCase(Locale.ROOT);
+        String role = entry.actorRole() == null ? "" : entry.actorRole().toLowerCase(Locale.ROOT);
+        return id.startsWith(actor) || id.contains(actor) || role.contains(actor);
+    }
+
+    @FXML
     private void handleUndo() {
-        if (coordinator == null) return;
+        if (coordinator == null) {
+            return;
+        }
+        if (!AdminGuardrails.hasPermission(sessionContext.getCurrentUser(), AdminPermission.UNDO_ACTIONS)) {
+            showError("Access denied. Your administrator account does not have the Undo Actions permission.");
+            return;
+        }
 
         try {
             coordinator.undoLastAction();
@@ -91,17 +118,23 @@ public class AuditReportController {
     }
 
     private void updateUndoButton() {
-        if (coordinator != null) {
-            undoButton.setDisable(!coordinator.getCommandInvoker().canUndo());
-        } else {
-            undoButton.setDisable(true);
+        boolean permitted = AdminGuardrails.hasPermission(
+                sessionContext.getCurrentUser(), AdminPermission.UNDO_ACTIONS);
+        boolean canUndo = coordinator != null && coordinator.getCommandInvoker().canUndo();
+
+        if (undoButton != null) {
+            undoButton.setDisable(!permitted || !canUndo);
+            undoButton.setTooltip(new Tooltip(!permitted
+                    ? "Requires the Undo Actions permission"
+                    : canUndo ? "Undo the most recent donation action" : "No recorded action to undo"));
         }
     }
 
     @FXML
     private void handleBack() {
         if (MainShellController.getInstance() != null) {
-            MainShellController.getInstance().navigateTo("/com/waslataam/ui/resources/fxml/AdminDashboard.fxml", "adminDashboard");
+            MainShellController.getInstance().navigateTo(
+                    "/com/waslataam/ui/resources/fxml/AdminDashboard.fxml", "adminDashboard");
         }
     }
 

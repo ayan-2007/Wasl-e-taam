@@ -58,8 +58,9 @@ This application follows a **3-layer architecture** with **6 Design Patterns**:
    - Domain models, business logic, design patterns
 
 3. **Data Layer** (`com.waslataam.repository.*`)
-   - Repository interfaces with in-memory implementations
-   - Ready for JDBC/JSON-file implementations
+   - Repository interfaces for donations and users
+   - Donations live in memory and are reseeded on launch; user profiles, credentials and the administrator allowlist are stored in an embedded SQLite database
+   - `Database.java` owns the schema; `SqliteUserRepository` and `SqliteAccountRepository` implement persistence
 
 ### Design Patterns Implemented
 
@@ -81,6 +82,70 @@ This application follows a **3-layer architecture** with **6 Design Patterns**:
 | **Volunteer** | Confirm pickups, confirm deliveries, toggle availability |
 | **Admin** | View dashboard, switch matching strategy, view audit reports, undo actions, view impact metrics |
 
+## Authentication, Demo Data & Admin Guardrails
+
+### Accounts and storage
+
+- Users sign **up** once (donor, recipient or volunteer) and then **sign in** with
+  the same email and password. Accounts survive application restarts.
+- Profiles and credentials are stored in an embedded **SQLite** database at
+  `data/wasl-e-taam.db` (created automatically on first launch).
+- Passwords are hashed with **PBKDF2-HMAC-SHA256** (120,000 iterations and a
+  random 16-byte salt per account). Plain-text passwords are never stored.
+- Five consecutive failed sign-ins temporarily lock an account for five minutes.
+- To reset all accounts, delete `data/wasl-e-taam.db` and relaunch. The demo
+  accounts and administrator allowlist are recreated automatically.
+- Use `-Dwasl.db.path=/some/other.db` to run against a different database file.
+  The test suite uses `target/test-data/wasl-e-taam.db`.
+
+### Demo accounts (password `demo1234` for every account)
+
+The sign-in screen has a **demo-account picker** that fills the email and
+password for you. All accounts below are seeded automatically.
+
+| Email | Role | What it demonstrates |
+|-------|------|----------------------|
+| `donor@wasl.demo` | Donor | Donations across the lifecycle, plus posting new food |
+| `bakery@wasl.demo` | Donor | Dry food, perishables, expired and rejected listings |
+| `recipient@wasl.demo` | Recipient | Claiming, cancelling and delivery history |
+| `shelter@wasl.demo` | Recipient | An in-transit delivery and completed deliveries |
+| `volunteer@wasl.demo` | Volunteer | Pickup queue, in-transit job and completed deliveries |
+| `courier@wasl.demo` | Volunteer | Completed deliveries and availability toggle |
+| `admin@wasl.demo` | Admin | **Full access** — all seven permissions |
+| `ops@wasl.demo` | Admin | **Limited access** — dashboard, donations and audit only |
+
+The seed also includes **13 donations covering all seven statuses**
+(`PENDING_REVIEW`, `AVAILABLE`, `CLAIMED`, `IN_TRANSIT`, `DELIVERED`, `EXPIRED`,
+`REJECTED`), a populated audit trail, impact metrics and one undoable action so
+the admin **Undo** button works on the first launch.
+
+### Administrator guardrails
+
+Administrator access requires **all** of the following:
+
+1. Public sign-up can never create an admin — only donor, recipient and
+   volunteer are offered.
+2. The stored credentials row must be flagged as an administrator.
+3. The persisted user must have the `ADMIN` role backed by an `Admin` object.
+4. The email must appear in the separate `admin_allowlist` table, which only the
+   seeder (or future provisioning tooling) can populate.
+
+Permissions are then enforced per screen and per action:
+
+| Permission | Controls |
+|------------|----------|
+| `VIEW_DASHBOARD` | Admin dashboard and impact dashboard |
+| `MANAGE_STRATEGIES` | Changing the matching strategy |
+| `VIEW_AUDIT_LOG` | Opening the audit report |
+| `UNDO_ACTIONS` | The undo button in the audit report |
+| `VIEW_ALL_DONATIONS` | Network-wide donation visibility (seeded for both admins) |
+| `MANAGE_USERS` / `EXPORT_REPORTS` | Reserved for future user/report tooling |
+
+Navigation re-checks the permission on every click, and each admin screen
+disables the actions the signed-in account cannot perform. For example,
+`ops@wasl.demo` can open the dashboard and audit report, but the strategy
+switcher is read-only and **Undo** stays disabled.
+
 ## Use Cases (UC-01 through UC-10)
 
 1. **UC-01**: Post Food Donation (Donor)
@@ -96,17 +161,24 @@ This application follows a **3-layer architecture** with **6 Design Patterns**:
 
 ## Demo Script
 
-1. Launch app: `mvn clean javafx:run`
-2. **Login as Donor**: Enter name, email, select "Donor" role
-3. **Post Donation**: Click "Post New Donation" → Fill form → Submit
-4. **Logout** → **Login as Recipient**: Select "Recipient" role
-5. **Claim Donation**: View available donations → Click "Claim"
-6. **Logout** → **Login as Volunteer**: Select "Volunteer" role
-7. **Pickup & Deliver**: Click "Confirm Pickup" → "Confirm Delivery"
-8. **Logout** → **Login as Admin**: Select "Admin" role
-9. **View Impact Dashboard**: See live metrics update
-10. **Switch Strategy**: Go to Strategy Switcher → Change algorithm
-11. **View Audit Report**: See complete audit trail with undo option
+1. Launch the app: `mvn javafx:run`
+2. **Sign in as Donor**: pick `donor@wasl.demo` (password `demo1234`) from the
+   demo list, or type the credentials. The dashboard already lists seeded
+   donations in several states.
+3. **Post Donation**: Click "Post a donation" → the form is pre-filled with
+   sensible dates → Submit. The new listing appears in your dashboard.
+4. **Logout** → **Sign in as Recipient**: `recipient@wasl.demo`
+5. **Claim Donation**: Open the Available tab → Claim → then cancel a claim
+   from the Claimed tab to show the reverse transition.
+6. **Logout** → **Sign in as Volunteer**: `volunteer@wasl.demo`
+7. **Pickup & Deliver**: Use the pickup queue → Confirm Pickup → Confirm Delivery.
+8. **Logout** → **Sign in as full Admin**: `admin@wasl.demo`
+9. **View Impact Dashboard**: See live metrics, top donors and recipients.
+10. **Switch Strategy**: Go to Strategy Switcher → Change the algorithm.
+11. **View Audit Report**: Filter by date/actor/action and press **Undo** to
+    reverse the most recent action.
+12. **Logout** → **Sign in as limited Admin**: `ops@wasl.demo` → the dashboard
+    opens, but Strategy Switcher is read-only and Undo is disabled.
 
 ## Project Structure
 
@@ -156,6 +228,16 @@ src/main/java/com/waslataam/
 │   ├── QuantityCheckHandler.java
 │   ├── LocationCheckHandler.java
 │   └── ApprovalHandler.java
+├── auth/                              # Authentication & administrator policy
+│   ├── AuthService.java               # Register, sign in, lockout
+│   ├── AuthException.java
+│   ├── PasswordHasher.java            # PBKDF2-HMAC-SHA256
+│   └── AdminPolicy.java               # Allowlist-backed admin check
+├── security/
+│   └── AdminGuardrails.java           # Per-view permission enforcement
+├── demo/
+│   ├── DemoAccounts.java              # Demo account catalogue
+│   └── DemoDataSeeder.java            # Users, donations, audit trail, metrics
 ├── observer/                          # Observer pattern
 │   ├── SystemObserver.java
 │   ├── SystemEvent.java
@@ -169,8 +251,13 @@ src/main/java/com/waslataam/
 ├── repository/                        # Data access
 │   ├── DonationRepository.java
 │   ├── UserRepository.java
+│   ├── AccountRepository.java
+│   ├── AccountRecord.java
 │   ├── InMemoryDonationRepo.java
-│   └── InMemoryUserRepo.java
+│   ├── InMemoryUserRepo.java
+│   ├── Database.java                  # Embedded SQLite schema
+│   ├── SqliteUserRepository.java
+│   └── SqliteAccountRepository.java
 ├── viewmodel/                         # JavaFX ViewModels
 │   ├── DashboardViewModel.java
 │   ├── DonationListViewModel.java
@@ -188,6 +275,7 @@ src/main/java/com/waslataam/
 - **Java 21** (classpath-based; no `module-info.java` required)
 - **JavaFX 21** (Controls, FXML, Graphics, Base)
 - **ControlsFX 11.2** for enhanced controls
+- **SQLite JDBC 3.45** for the embedded accounts database
 - **Jackson 2.17** for JSON serialization
 - **SLF4J + Logback** for logging
 - **JUnit 5 + TestFX** for testing
@@ -197,6 +285,8 @@ src/main/java/com/waslataam/
 - Logging: `src/main/resources/logback.xml` (console + rolling file to `logs/waslataam.log`)
 - Theme: `src/main/java/com/waslataam/ui/resources/css/theme.css` (Green #2d7a3a / Gold #c9962a)
 - Expiry watcher interval: 30 seconds (configurable in `Main.java`)
+- Accounts database: `data/wasl-e-taam.db` (override with `-Dwasl.db.path=...`)
+- Delete the database file to reset all accounts; demo accounts are reseeded on launch
 
 ## Testing
 

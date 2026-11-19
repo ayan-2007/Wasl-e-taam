@@ -11,10 +11,9 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.UUID;
 
 public class PostDonationFormController {
     @FXML private ComboBox<DonationType> typeComboBox;
@@ -45,6 +44,11 @@ public class PostDonationFormController {
         expiryTimeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
         shelfLifeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 365, 1));
         servingsSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 1));
+
+        // Sensible defaults so a demo can be posted in a few clicks.
+        expiryDatePicker.setValue(LocalDate.now().plusDays(1));
+        cookedAtPicker.setValue(LocalDate.now());
+        temperatureField.setText("2–8°C, refrigerated");
     }
 
     @FXML
@@ -120,6 +124,9 @@ public class PostDonationFormController {
         if (type == DonationType.PREPARED_MEAL) {
             if (servingsSpinner.getValue() <= 0) errors.append("• Enter servings\n");
             if (cookedAtPicker.getValue() == null) errors.append("• Select cooked date\n");
+            else if (cookedAtPicker.getValue().isAfter(LocalDate.now())) {
+                errors.append("• Cooked date cannot be in the future\n");
+            }
         }
 
         if (errors.length() > 0) {
@@ -151,10 +158,23 @@ public class PostDonationFormController {
             builder.shelfLifeDays(shelfLifeSpinner.getValue());
         } else if (type == DonationType.PREPARED_MEAL) {
             builder.servings(servingsSpinner.getValue())
-                   .cookedAt(LocalDateTime.of(cookedAtPicker.getValue(), LocalTime.NOON));
+                   .cookedAt(cookedAtFor(cookedAtPicker.getValue()));
         }
 
         return builder.build();
+    }
+
+    /**
+     * PreparedMealDonation rejects a cooked-at time in the future. If the donor
+     * picked today, use a time a few minutes ago instead of noon (which may
+     * still be ahead of the clock during a morning demo).
+     */
+    private static LocalDateTime cookedAtFor(LocalDate date) {
+        LocalDate today = LocalDate.now();
+        if (date == null || date.isEqual(today)) {
+            return LocalDateTime.now().minusMinutes(10);
+        }
+        return LocalDateTime.of(date, LocalTime.NOON);
     }
 
     @FXML

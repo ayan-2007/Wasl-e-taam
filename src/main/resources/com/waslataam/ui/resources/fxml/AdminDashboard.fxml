@@ -14,6 +14,7 @@
             <Label fx:id="welcomeLabel" text="Operations overview" styleClass="page-title"/>
             <Label text="The network at a glance, plus the latest actions across the platform."
                    styleClass="page-subtitle" wrapText="true" maxWidth="640"/>
+            <Label fx:id="accessLevelLabel" text="Checking administrator permissions…" styleClass="field-hint" wrapText="true"/>
         </VBox>
         <VBox alignment="CENTER_RIGHT" spacing="4">
             <Button text="Refresh" styleClass="button-secondary" onAction="#handleRefresh"/>
@@ -71,7 +72,7 @@
                 <Label text="Three places to inspect or change how the network behaves." styleClass="section-hint" wrapText="true"/>
             </VBox>
 
-            <Button styleClass="link-card" maxWidth="Infinity" accessibleText="Open matching strategy" onAction="#handleStrategySwitcher">
+            <Button fx:id="strategyButton" styleClass="link-card" maxWidth="Infinity" accessibleText="Open matching strategy" onAction="#handleStrategySwitcher">
                 <graphic>
                     <VBox spacing="2" alignment="CENTER_LEFT">
                         <Label text="Matching strategy" styleClass="link-card-title"/>
@@ -80,7 +81,7 @@
                 </graphic>
             </Button>
 
-            <Button styleClass="link-card" maxWidth="Infinity" accessibleText="Open audit report" onAction="#handleAuditReport">
+            <Button fx:id="auditButton" styleClass="link-card" maxWidth="Infinity" accessibleText="Open audit report" onAction="#handleAuditReport">
                 <graphic>
                     <VBox spacing="2" alignment="CENTER_LEFT">
                         <Label text="Audit report" styleClass="link-card-title"/>
@@ -89,7 +90,7 @@
                 </graphic>
             </Button>
 
-            <Button styleClass="link-card" maxWidth="Infinity" accessibleText="Open impact dashboard" onAction="#handleImpactDashboard">
+            <Button fx:id="impactButton" styleClass="link-card" maxWidth="Infinity" accessibleText="Open impact dashboard" onAction="#handleImpactDashboard">
                 <graphic>
                     <VBox spacing="2" alignment="CENTER_LEFT">
                         <Label text="Impact dashboard" styleClass="link-card-title"/>

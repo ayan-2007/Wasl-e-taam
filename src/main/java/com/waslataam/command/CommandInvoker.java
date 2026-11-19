@@ -31,6 +31,17 @@ public class CommandInvoker {
         lastCommand.undo();
     }
 
+    /**
+     * Records a command that has already been executed elsewhere. Used by the
+     * demo data seeder so the undo button is meaningful on first launch.
+     */
+    public void record(DonationCommand command) {
+        history.addLast(command);
+        if (history.size() > MAX_HISTORY) {
+            history.removeFirst();
+        }
+    }
+
     public boolean canUndo() {
         return !history.isEmpty();
     }

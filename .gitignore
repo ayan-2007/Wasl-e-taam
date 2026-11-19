@@ -9,3 +9,10 @@ logs/
 .idea/
 *.iml
 .vscode/
+
+# Local SQLite database (accounts, demo data)
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm

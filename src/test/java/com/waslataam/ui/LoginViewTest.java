@@ -29,25 +29,22 @@ class LoginViewTest {
         org.junit.jupiter.api.Assertions.assertNotNull(robot.lookup("#roleComboBox").queryAs(javafx.scene.control.ComboBox.class));
         org.junit.jupiter.api.Assertions.assertNotNull(robot.lookup("#nameField").queryAs(javafx.scene.control.TextField.class));
         org.junit.jupiter.api.Assertions.assertNotNull(robot.lookup("#emailField").queryAs(javafx.scene.control.TextField.class));
+        org.junit.jupiter.api.Assertions.assertNotNull(robot.lookup("#passwordField").queryAs(javafx.scene.control.PasswordField.class));
         org.junit.jupiter.api.Assertions.assertNotNull(robot.lookup("#loginButton").queryAs(javafx.scene.control.Button.class));
     }
 
     @Test
-    void testLoginWithDonorRole(FxRobot robot) {
-        javafx.scene.control.ComboBox<com.waslataam.domain.UserRole> roleCombo = 
-                robot.lookup("#roleComboBox").queryAs(javafx.scene.control.ComboBox.class);
-        javafx.scene.control.TextField nameField = 
-                robot.lookup("#nameField").queryAs(javafx.scene.control.TextField.class);
+    void testLoginWithDemoDonorAccount(FxRobot robot) {
         javafx.scene.control.TextField emailField = 
                 robot.lookup("#emailField").queryAs(javafx.scene.control.TextField.class);
+        javafx.scene.control.PasswordField passwordField =
+                robot.lookup("#passwordField").queryAs(javafx.scene.control.PasswordField.class);
         javafx.scene.control.Button loginButton = 
                 robot.lookup("#loginButton").queryAs(javafx.scene.control.Button.class);
 
         robot.interact(() -> {
-            roleCombo.setValue(com.waslataam.domain.UserRole.DONOR);
-            roleCombo.getSelectionModel().select(com.waslataam.domain.UserRole.DONOR);
-            nameField.setText("Test Donor");
-            emailField.setText("donor@test.com");
+            emailField.setText("donor@wasl.demo");
+            passwordField.setText(com.waslataam.demo.DemoAccounts.PASSWORD);
             loginButton.fire();
         });
         

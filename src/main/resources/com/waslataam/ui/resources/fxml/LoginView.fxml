@@ -70,42 +70,70 @@
         </Label>
     </VBox>
 
-    <!-- Sign-in form -->
+    <!-- Sign-in / sign-up form -->
     <VBox styleClass="login-form-panel" HBox.hgrow="ALWAYS" alignment="CENTER">
-        <VBox styleClass="login-form" spacing="24" maxWidth="380">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                    styleClass="login-scroll" maxWidth="430" prefViewportWidth="400">
+            <VBox styleClass="login-form" spacing="16" maxWidth="400">
 
-            <VBox spacing="6">
-                <Label text="Sign in" styleClass="page-title"/>
-                <Label text="Choose the role you are working in today. The name you enter appears on every action you take."
-                       styleClass="page-subtitle" wrapText="true"/>
+                <VBox spacing="6">
+                    <Label fx:id="formTitleLabel" text="Sign in" styleClass="page-title"/>
+                    <Label fx:id="formSubtitleLabel"
+                           text="Sign in with the email and password you registered. Demo accounts are ready to explore every role."
+                           styleClass="page-subtitle" wrapText="true"/>
+                </VBox>
+
+                <VBox fx:id="demoBox" styleClass="hint-box" spacing="6">
+                    <Label text="Demo accounts · password demo1234" styleClass="hint-title"/>
+                    <ComboBox fx:id="demoAccountComboBox" promptText="Fill in a demo account"
+                              maxWidth="Infinity" onAction="#handleDemoAccountSelected"/>
+                    <Label text="Donor, recipient, volunteer and two administrator accounts (one full, one limited)."
+                           styleClass="hint-body" wrapText="true"/>
+                </VBox>
+
+                <VBox fx:id="roleRow" spacing="8" visible="false" managed="false">
+                    <Label text="I am signing up as" styleClass="field-label" labelFor="$roleComboBox"/>
+                    <ComboBox fx:id="roleComboBox" promptText="Select your role" maxWidth="Infinity"/>
+                    <Label text="Administrator accounts are provisioned internally and cannot be created here."
+                           styleClass="field-hint" wrapText="true"/>
+                </VBox>
+
+                <VBox fx:id="nameRow" spacing="8" visible="false" managed="false">
+                    <Label text="Full name" styleClass="field-label" labelFor="$nameField"/>
+                    <TextField fx:id="nameField" promptText="e.g. Amina Siddiqui"/>
+                </VBox>
+
+                <VBox spacing="8">
+                    <Label text="Email" styleClass="field-label" labelFor="$emailField"/>
+                    <TextField fx:id="emailField" promptText="you@example.org"/>
+                </VBox>
+
+                <VBox spacing="8">
+                    <Label text="Password" styleClass="field-label" labelFor="$passwordField"/>
+                    <PasswordField fx:id="passwordField" promptText="At least 8 characters, letters and numbers"/>
+                </VBox>
+
+                <VBox fx:id="confirmRow" spacing="8" visible="false" managed="false">
+                    <Label text="Confirm password" styleClass="field-label" labelFor="$confirmPasswordField"/>
+                    <PasswordField fx:id="confirmPasswordField" promptText="Repeat your password"/>
+                </VBox>
+
+                <Label fx:id="errorLabel" styleClass="form-error" visible="false" managed="false" wrapText="true"/>
+
+                <Button fx:id="loginButton" text="Sign in" maxWidth="Infinity" defaultButton="true" onAction="#handleLogin"/>
+
+                <Button fx:id="modeToggleButton" text="New here? Create an account" styleClass="button-link"
+                        maxWidth="Infinity" onAction="#handleModeToggle"/>
+
+                <VBox styleClass="hint-box" spacing="4">
+                    <Label text="Administrator access is restricted" styleClass="hint-title"/>
+                    <Label text="Only pre-approved accounts can sign in as an administrator. Public sign-up is limited to donor, recipient and volunteer roles."
+                           styleClass="hint-body" wrapText="true"/>
+                </VBox>
+
+                <Label text="Accounts and passwords are stored in a local SQLite database on this device."
+                       styleClass="caption" wrapText="true"/>
             </VBox>
-
-            <VBox spacing="8">
-                <Label text="Role" styleClass="field-label" labelFor="$roleComboBox"/>
-                <ComboBox fx:id="roleComboBox" promptText="Select your role" maxWidth="Infinity"/>
-            </VBox>
-
-            <VBox spacing="8">
-                <Label text="Name" styleClass="field-label" labelFor="$nameField"/>
-                <TextField fx:id="nameField" promptText="e.g. Amina Siddiqui"/>
-            </VBox>
-
-            <VBox spacing="8">
-                <Label text="Email" styleClass="field-label" labelFor="$emailField"/>
-                <TextField fx:id="emailField" promptText="amina@example.org"/>
-            </VBox>
-
-            <Label fx:id="errorLabel" styleClass="form-error" visible="false" managed="false" wrapText="true"/>
-
-            <Button fx:id="loginButton" text="Sign in" maxWidth="Infinity" defaultButton="true" onAction="#handleLogin"/>
-
-            <VBox styleClass="hint-box" spacing="4">
-                <Label text="Testing the demo" styleClass="hint-title"/>
-                <Label text="Use any name and email. Sign in as each role to follow one donation from posting to delivery."
-                       styleClass="hint-body" wrapText="true"/>
-            </VBox>
-
-            <Label text="Your data stays on this device for this session." styleClass="caption" wrapText="true"/>
-        </VBox>
+        </ScrollPane>
     </VBox>
 </HBox>

@@ -1,12 +1,9 @@
 package com.waslataam.ui.controllers;
 
 import com.waslataam.coordination.DonationCoordinator;
-import com.waslataam.command.ClaimDonationCommand;
-import com.waslataam.command.CancelClaimCommand;
 import com.waslataam.domain.Donation;
 import com.waslataam.domain.DonationStatus;
 import com.waslataam.domain.Recipient;
-import com.waslataam.domain.UserRole;
 import com.waslataam.viewmodel.DonationListViewModel;
 import com.waslataam.viewmodel.SessionContext;
 import javafx.collections.FXCollections;
@@ -15,12 +12,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
 public class RecipientDashboardController {
     @FXML private Label welcomeLabel;
+    @FXML private Label availableCountLabel;
+    @FXML private Label claimedCountLabel;
     @FXML private ComboBox<String> typeFilterComboBox;
     @FXML private CheckBox urgentCheckBox;
     @FXML private TableView<DonationListViewModel.DonationRow> donationsTable;
@@ -100,6 +98,8 @@ public class RecipientDashboardController {
                 .filter(d -> typeFilter == null || "All Types".equals(typeFilter)
                         || d.getType().getDisplayName().equals(typeFilter))
                 .filter(d -> !urgentOnly || d.isUrgent())
+                .sorted(java.util.Comparator.comparing(Donation::isUrgent).reversed()
+                        .thenComparing(Donation::getExpiryTime))
                 .toList();
         availableViewModel.setDonations(donations);
 
@@ -111,6 +111,10 @@ public class RecipientDashboardController {
             coordinator.getUserRepository().findById(donation.getDonorId())
                     .ifPresent(u -> row.setDonorName(u.getName()));
         }
+
+        if (availableCountLabel != null) {
+            availableCountLabel.setText(donations.size() + (donations.size() == 1 ? " listing" : " listings"));
+        }
     }
 
     private void loadClaimedDonations() {
@@ -121,6 +125,9 @@ public class RecipientDashboardController {
 
         List<Donation> donations = coordinator.getDonationRepository().findByRecipientId(user.getId());
         claimedViewModel.setDonations(donations);
+        if (claimedCountLabel != null) {
+            claimedCountLabel.setText(donations.size() + (donations.size() == 1 ? " claim" : " claims"));
+        }
     }
 
     @FXML
@@ -137,13 +144,10 @@ public class RecipientDashboardController {
 
     private void handleClaim(DonationListViewModel.DonationRow row) {
         try {
-            ClaimDonationCommand cmd = new ClaimDonationCommand(
-                    coordinator.getDonationRepository(),
-                    row.getId(),
-                    sessionContext.getCurrentUser().getId()
-            );
-            coordinator.getCommandInvoker().execute(cmd);
-            
+            // Go through the coordinator so the audit trail, observers and
+            // recipient histories stay in step with the state machine.
+            coordinator.claimDonation(row.getId(), sessionContext.getCurrentUser().getId());
+
             showSuccess("Donation claimed successfully!");
             loadAvailableDonations();
             loadClaimedDonations();
@@ -161,13 +165,8 @@ public class RecipientDashboardController {
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    CancelClaimCommand cmd = new CancelClaimCommand(
-                            coordinator.getDonationRepository(),
-                            row.getId(),
-                            sessionContext.getCurrentUser().getId()
-                    );
-                    coordinator.getCommandInvoker().execute(cmd);
-                    
+                    coordinator.cancelClaim(row.getId(), sessionContext.getCurrentUser().getId());
+
                     showSuccess("Claim cancelled.");
                     loadAvailableDonations();
                     loadClaimedDonations();

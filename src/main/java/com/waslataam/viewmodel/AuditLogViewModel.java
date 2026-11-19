@@ -92,7 +92,7 @@ public class AuditLogViewModel {
 
         public AuditEntryRow(AuditTrail.AuditEntry entry) {
             this.timestamp = entry.timestamp();
-            this.actorId = entry.actorId().toString().substring(0, 8);
+            this.actorId = entry.actorId() != null ? entry.actorId().toString().substring(0, 8) : "SYSTEM";
             this.actorRole = entry.actorRole();
             this.action = entry.action();
             this.donationId = entry.donationId();

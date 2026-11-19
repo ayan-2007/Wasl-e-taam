@@ -1,8 +1,6 @@
 package com.waslataam.ui.controllers;
 
 import com.waslataam.coordination.DonationCoordinator;
-import com.waslataam.command.MarkPickedUpCommand;
-import com.waslataam.command.MarkDeliveredCommand;
 import com.waslataam.domain.Donation;
 import com.waslataam.domain.DonationStatus;
 import com.waslataam.domain.Volunteer;
@@ -20,6 +18,10 @@ import java.util.UUID;
 
 public class VolunteerDashboardController {
     @FXML private Label welcomeLabel;
+    @FXML private Label openPickupsValue;
+    @FXML private Label inTransitValue;
+    @FXML private Label completedValue;
+    @FXML private Label tableCountLabel;
     @FXML private ToggleButton availabilityToggle;
     @FXML private TableView<DonationListViewModel.DonationRow> pickupsTable;
     @FXML private TableColumn<DonationListViewModel.DonationRow, String> typeColumn;
@@ -46,10 +48,12 @@ public class VolunteerDashboardController {
         setupTable();
         pickupsTable.setItems(viewModel.getDonations());
         loadPickups();
-        
-        // Set initial availability
+        refreshAvailability();
+    }
+
+    private void refreshAvailability() {
         var user = sessionContext.getCurrentUser();
-        if (user instanceof Volunteer volunteer) {
+        if (user instanceof Volunteer volunteer && availabilityToggle != null) {
             availabilityToggle.setSelected(volunteer.isAvailable());
             availabilityToggle.setText(volunteer.isAvailable() ? "Available" : "Unavailable");
         }
@@ -71,7 +75,27 @@ public class VolunteerDashboardController {
         var user = sessionContext.getCurrentUser();
         if (user == null) return;
 
-        List<Donation> donations = coordinator.getDonationRepository().findByVolunteerId(user.getId());
+        UUID volunteerId = user.getId();
+
+        // The queue contains every claimed/in-transit donation that has not
+        // been assigned to another volunteer, plus this volunteer's completed
+        // deliveries for context. Unassigned claims are how a new volunteer
+        // can pick up their first job.
+        List<Donation> donations = coordinator.getDonationRepository().findAll().stream()
+                .filter(d -> {
+                    DonationStatus status = d.getStatus();
+                    boolean unassignedOrMine =
+                            d.getVolunteerId() == null || volunteerId.equals(d.getVolunteerId());
+                    boolean activePickup = (status == DonationStatus.CLAIMED
+                            || status == DonationStatus.IN_TRANSIT) && unassignedOrMine;
+                    boolean myHistory = status == DonationStatus.DELIVERED
+                            && volunteerId.equals(d.getVolunteerId());
+                    return activePickup || myHistory;
+                })
+                .sorted(java.util.Comparator
+                        .comparingInt((Donation d) -> statusRank(d.getStatus()))
+                        .thenComparing(Donation::getExpiryTime))
+                .toList();
         viewModel.setDonations(donations);
 
         // Resolve recipient names by the donation's recipient id (same order as the rows).
@@ -84,6 +108,33 @@ public class VolunteerDashboardController {
                         .ifPresent(u -> row.setRecipientName(u.getName()));
             }
         }
+
+        long open = donations.stream().filter(d -> d.getStatus() == DonationStatus.CLAIMED).count();
+        long inTransit = donations.stream().filter(d -> d.getStatus() == DonationStatus.IN_TRANSIT).count();
+        long completed = donations.stream().filter(d -> d.getStatus() == DonationStatus.DELIVERED).count();
+
+        if (openPickupsValue != null) {
+            openPickupsValue.setText(String.valueOf(open));
+        }
+        if (inTransitValue != null) {
+            inTransitValue.setText(String.valueOf(inTransit));
+        }
+        if (completedValue != null) {
+            completedValue.setText(String.valueOf(completed));
+        }
+        if (tableCountLabel != null) {
+            long active = open + inTransit;
+            tableCountLabel.setText(active + " active");
+        }
+    }
+
+    private static int statusRank(DonationStatus status) {
+        return switch (status) {
+            case CLAIMED -> 0;
+            case IN_TRANSIT -> 1;
+            case DELIVERED -> 2;
+            default -> 3;
+        };
     }
 
     @FXML
@@ -151,15 +202,11 @@ public class VolunteerDashboardController {
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    MarkPickedUpCommand cmd = new MarkPickedUpCommand(
-                            coordinator.getDonationRepository(),
-                            row.getId(),
-                            sessionContext.getCurrentUser().getId()
-                    );
-                    coordinator.getCommandInvoker().execute(cmd);
-                    
+                    coordinator.pickupDonation(row.getId(), sessionContext.getCurrentUser().getId());
+
                     showSuccess("Pickup confirmed! Donation is now in transit.");
                     loadPickups();
+                    refreshAvailability();
                 } catch (Exception e) {
                     showError("Failed to confirm pickup: " + e.getMessage());
                 }
@@ -176,15 +223,11 @@ public class VolunteerDashboardController {
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    MarkDeliveredCommand cmd = new MarkDeliveredCommand(
-                            coordinator.getDonationRepository(),
-                            row.getId(),
-                            sessionContext.getCurrentUser().getId()
-                    );
-                    coordinator.getCommandInvoker().execute(cmd);
-                    
+                    coordinator.deliverDonation(row.getId(), sessionContext.getCurrentUser().getId());
+
                     showSuccess("Delivery confirmed! Thank you for your service.");
                     loadPickups();
+                    refreshAvailability();
                 } catch (Exception e) {
                     showError("Failed to confirm delivery: " + e.getMessage());
                 }

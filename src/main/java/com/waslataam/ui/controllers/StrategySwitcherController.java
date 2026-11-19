@@ -1,11 +1,14 @@
 package com.waslataam.ui.controllers;
 
 import com.waslataam.coordination.DonationCoordinator;
+import com.waslataam.domain.AdminPermission;
+import com.waslataam.security.AdminGuardrails;
 import com.waslataam.strategy.MatchingEngine;
 import com.waslataam.strategy.MatchingStrategy;
 import com.waslataam.strategy.NearestFirstStrategy;
 import com.waslataam.strategy.ExpiryFirstStrategy;
 import com.waslataam.strategy.CapacityBasedStrategy;
+import com.waslataam.viewmodel.SessionContext;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -21,6 +24,7 @@ public class StrategySwitcherController {
     public void setCoordinator(DonationCoordinator coordinator) {
         this.coordinator = coordinator;
         initializeStrategies();
+        applyGuardrails();
     }
 
     @FXML
@@ -29,6 +33,7 @@ public class StrategySwitcherController {
             coordinator = com.waslataam.Main.getCoordinator();
         }
         initializeStrategies();
+        applyGuardrails();
     }
 
     private void initializeStrategies() {
@@ -46,7 +51,13 @@ public class StrategySwitcherController {
     @FXML
     private void handleStrategyChange() {
         if (coordinator == null) return;
-        
+
+        if (!AdminGuardrails.hasPermission(SessionContext.getInstance().getCurrentUser(),
+                AdminPermission.MANAGE_STRATEGIES)) {
+            currentStrategyLabel.setText("Read-only — your administrator account cannot change matching strategies.");
+            return;
+        }
+
         String selected = strategyComboBox.getValue();
         if (selected == null) return;
 
@@ -60,6 +71,20 @@ public class StrategySwitcherController {
 
         engine.setStrategy(newStrategy);
         currentStrategyLabel.setText("Current: " + newStrategy.getName());
+    }
+
+    private void applyGuardrails() {
+        if (coordinator == null) {
+            return;
+        }
+        boolean allowed = AdminGuardrails.hasPermission(
+                SessionContext.getInstance().getCurrentUser(), AdminPermission.MANAGE_STRATEGIES);
+        strategyComboBox.setDisable(!allowed);
+        if (!allowed) {
+            currentStrategyLabel.setText("Read-only · current: "
+                    + coordinator.getMatchingEngine().getCurrentStrategy().getName()
+                    + " — changing it requires the Manage Matching Strategies permission.");
+        }
     }
 
     @FXML
